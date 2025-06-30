@@ -42,7 +42,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [collections, setCollections] = React.useState([
     {
       id: "1",
-      title: "Projects",
+      title: "Pixel & Ink",
       icon: Folder,
       items: [
         { id: "1-1", title: "Website Redesign", icon: File, isActive: true },
@@ -53,7 +53,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     },
     {
       id: "2",
-      title: "Documents",
+      title: "Brain Brew",
       icon: BookOpen,
       items: [
         { id: "2-1", title: "Meeting Notes", icon: File },
@@ -65,7 +65,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     },
     {
       id: "3",
-      title: "Team",
+      title: "Blog & Beyond",
       icon: Users,
       items: [
         { id: "3-1", title: "Developers", icon: Users },
@@ -76,7 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     },
     {
       id: "4",
-      title: "Favorites",
+      title: "Life in Drafts",
       icon: Star,
       items: [
         { id: "4-1", title: "Dashboard Analytics", icon: File },
@@ -86,7 +86,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     },
     {
       id: "5",
-      title: "Archive",
+      title: "Wireframe Journal",
       icon: Archive,
       items: [
         { id: "5-1", title: "Old Projects", icon: Folder },
@@ -197,7 +197,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <FolderOpen className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">Workspace</span>
+                  <span className="font-semibold">ThejanNims</span>
                   <span className="text-xs">Collections</span>
                 </div>
               </a>
