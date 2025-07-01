@@ -3,14 +3,13 @@
 import type * as React from "react"
 import { useState } from "react"
 import Link from "next/link"
-import { Mail, ArrowLeft, CheckCircle } from "lucide-react"
+import { Mail, CheckCircle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { supabase } from "@/lib/supabase"
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
@@ -23,21 +22,21 @@ export default function ForgotPasswordPage() {
     setIsLoading(true)
     setError("")
 
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
-      })
+    // try {
+    //   const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    //     redirectTo: `${window.location.origin}/auth/reset-password`,
+    //   })
 
-      if (error) {
-        setError(error.message)
-      } else {
-        setSuccess(true)
-      }
-    } catch (err) {
-      setError(`An unexpected error occurred: ${err}`)
-    } finally {
-      setIsLoading(false)
-    }
+    //   if (error) {
+    //     setError(error.message)
+    //   } else {
+    //     setSuccess(true)
+    //   }
+    // } catch (err) {
+    //   setError(`An unexpected error occurred: ${err}`)
+    // } finally {
+    //   setIsLoading(false)
+    // }
   }
 
   if (success) {

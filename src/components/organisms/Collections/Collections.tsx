@@ -50,9 +50,7 @@ export default function Collections({
   const [collections, setCollections] = React.useState<Collection[] | null>(
     initialCollections
   );
-  const [documents, setDocuments] = React.useState<Document[] | null>(
-    initialDocuments
-  );
+  const [documents, setDocuments] = React.useState<DocumentItem[] | null>(initialDocuments);
   const [openSections, setOpenSections] = React.useState<string[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
@@ -68,21 +66,26 @@ export default function Collections({
 
   const buildTree = (
     parentId: string | null = null
-  ): (Collection | Document)[] => {
-    const items: (Collection | Document)[] = [];
+  ): (Collection | DocumentItem)[] => {
+    const items: (Collection | DocumentItem)[] = [];
 
     // Add child collections
     const childCollections = collections?.filter(
       (c) => c.parent_id === parentId
     );
-    items.push(...childCollections);
+
+    if (childCollections) {
+        items.push(...childCollections);
+    }
 
     // Add documents for this collection
     if (parentId) {
       const collectionDocuments = documents?.filter(
         (d) => d.collection_id === parentId
       );
-      items.push(...collectionDocuments);
+      if (collectionDocuments) {
+        items.push(...collectionDocuments);
+      }
     }
 
     return items;
@@ -116,7 +119,7 @@ export default function Collections({
       if (error) throw error;
 
       // Update local state immediately
-      setCollections((prev) => [...prev, data]);
+      setCollections((prev) => [...(prev ?? []), data]);
 
       // Optionally refresh the page for full sync
       router.refresh();
@@ -151,7 +154,7 @@ export default function Collections({
           if (deleteError) throw deleteError;
 
           // Update local state
-          setCollections((prev) => prev.filter((c) => c.id !== collectionId));
+          setCollections((prev) => prev?.filter((c) => c.id !== collectionId) ?? []);
           break;
 
         case "rename":
@@ -169,14 +172,14 @@ export default function Collections({
 
           // Update local state
           setCollections((prev) =>
-            prev.map((c) =>
+            prev?.map((c) =>
               c.id === collectionId ? { ...c, name: data.name } : c
-            )
+            ) ?? []
           );
           break;
 
         case "duplicate":
-          const collection = collections.find((c) => c.id === collectionId);
+          const collection = collections?.find((c) => c.id === collectionId);
           if (!collection) return;
 
           const { data: duplicateData, error: duplicateError } = await supabase
@@ -191,7 +194,7 @@ export default function Collections({
           if (duplicateError) throw duplicateError;
 
           // Update local state
-          setCollections((prev) => [...prev, duplicateData]);
+          setCollections((prev) => [...(prev ?? []), duplicateData]);
           break;
       }
 
@@ -226,8 +229,8 @@ export default function Collections({
       if (isCollection) {
         const collection = item as Collection;
         const hasChildren =
-          collections.some((c) => c.parent_id === collection.id) ||
-          documents.some((d) => d.collection_id === collection.id);
+          collections?.some((c) => c.parent_id === collection.id) ||
+          (documents?.some((d) => d.collection_id === collection.id) ?? false);
 
         return (
           <Collapsible
@@ -314,7 +317,7 @@ export default function Collections({
         );
       } else {
         // Render document
-        const document = item as Document;
+        const document = item as DocumentItem;
 
         return (
           <SidebarMenuSubItem key={document.id}>

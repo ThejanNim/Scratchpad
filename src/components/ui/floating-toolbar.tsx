@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip";
 import { Button } from "./button";
-import { Separator } from "@radix-ui/react-dropdown-menu";
+import { Separator } from "./separator";
 
 export function FloatingToolbar() {
   const [isExpanded, setIsExpanded] = React.useState(false);

@@ -338,7 +338,7 @@ Key capabilities include:
       content:
         "This section needs more detail about the user research findings. We should include specific metrics and user feedback to strengthen our argument.",
       timestamp: "2 hours ago",
-      status: "open",
+      status: "open" as const,
       selectedText: "Content writers across multiple domains frequently struggle",
       likes: 3,
       isLiked: false,
@@ -371,7 +371,7 @@ Key capabilities include:
       content:
         "Great insights! Can we add some metrics to support this? Maybe include the 40% productivity loss statistic we found in our research.",
       timestamp: "1 hour ago",
-      status: "resolved",
+      status: "resolved" as const,
       selectedText: "significantly impact productivity, quality, and collaboration effectiveness",
       likes: 5,
       isLiked: true,
@@ -404,7 +404,7 @@ Key capabilities include:
       content:
         "Should we consider adding a section about competitive analysis here? It would help contextualize our solution.",
       timestamp: "45 minutes ago",
-      status: "open",
+      status: "open" as const,
       selectedText: "Solution Overview",
       likes: 1,
       isLiked: false,
@@ -730,9 +730,9 @@ Key capabilities include:
           )}
 
           {/* Comment Bubble */}
-          {showCommentBubble && activeCommentId && commentThreads[activeCommentId] && (
+          {showCommentBubble && activeCommentId && commentThreads[activeCommentId as keyof typeof commentThreads] && (
             <CommentBubble
-              comment={commentThreads[activeCommentId]}
+              comment={commentThreads[activeCommentId as keyof typeof commentThreads]}
               position={commentBubblePosition}
               onClose={handleCloseCommentBubble}
               onLike={(commentId, replyId) => {
