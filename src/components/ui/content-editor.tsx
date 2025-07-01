@@ -18,26 +18,8 @@ import {
   HighlighterIcon as Highlight,
   BookOpen,
   Clock,
-  CheckCircle2,
-  AlertCircle,
-  Lightbulb,
-  MousePointer2,
-  StickyNote,
-  Circle,
-  Type,
-  Minus,
-  Smile,
-  PenTool,
-  Puzzle,
-  ChevronUp,
-  Triangle,
-  ArrowRight,
-  Heart,
-  Star,
-  Zap,
   X,
   Send,
-  HelpCircle,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -59,6 +41,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Card, CardContent } from "@/components/ui/card";
+import { FloatingToolbar } from "./floating-toolbar";
+import { CommentBubble } from "./comment-bubble";
 
 const collaborators = [
   {
@@ -84,6 +68,28 @@ const collaborators = [
   },
 ];
 
+const commentHighlights = [
+  {
+    start: 20,
+    end: 80,
+    commentId: "1",
+    authors: [
+      { initials: "SC", color: "bg-blue-500" },
+      { initials: "MJ", color: "bg-green-500" },
+    ],
+  },
+  {
+    start: 150,
+    end: 220,
+    commentId: "2",
+    authors: [
+      { initials: "ED", color: "bg-purple-500" },
+      { initials: "AK", color: "bg-orange-500" },
+    ],
+  },
+  { start: 300, end: 320, commentId: "3", authors: [{ initials: "DW", color: "bg-red-500" }] },
+]
+
 interface Comment {
   id: string;
   author: string;
@@ -103,97 +109,6 @@ interface Comment {
     timestamp: string;
     type: "comment" | "question";
   }>;
-}
-
-function FloatingToolbar() {
-  const [isExpanded, setIsExpanded] = React.useState(false);
-  const [selectedTool, setSelectedTool] = React.useState("selector");
-
-  const mainTools = [
-    { id: "selector", icon: MousePointer2, label: "Selector" },
-    { id: "sticky", icon: StickyNote, label: "Sticky Notes" },
-    { id: "shapes", icon: Circle, label: "Shapes" },
-    { id: "text", icon: Type, label: "Text" },
-    { id: "connectors", icon: Minus, label: "Connectors" },
-    { id: "stamps", icon: Smile, label: "Stamps/Emojis" },
-    { id: "drawing", icon: PenTool, label: "Drawing" },
-    { id: "widgets", icon: Puzzle, label: "Widgets" },
-  ];
-
-  const expandedTools = [
-    { id: "triangle", icon: Triangle, label: "Triangle" },
-    { id: "arrow", icon: ArrowRight, label: "Arrow" },
-    { id: "heart", icon: Heart, label: "Heart" },
-    { id: "star", icon: Star, label: "Star" },
-    { id: "lightning", icon: Zap, label: "Lightning" },
-  ];
-
-  return (
-    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-lg p-2">
-        {/* Expanded Tools */}
-        {isExpanded && (
-          <div className="flex items-center gap-1 mb-2 pb-2 border-b">
-            {expandedTools.map((tool) => (
-              <Tooltip key={tool.id}>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={selectedTool === tool.id ? "default" : "ghost"}
-                    size="sm"
-                    className="h-10 w-10 p-0"
-                    onClick={() => setSelectedTool(tool.id)}
-                  >
-                    <tool.icon className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top">{tool.label}</TooltipContent>
-              </Tooltip>
-            ))}
-          </div>
-        )}
-
-        {/* Main Tools */}
-        <div className="flex items-center gap-1">
-          {mainTools.map((tool) => (
-            <Tooltip key={tool.id}>
-              <TooltipTrigger asChild>
-                <Button
-                  variant={selectedTool === tool.id ? "default" : "ghost"}
-                  size="sm"
-                  className="h-10 w-10 p-0"
-                  onClick={() => setSelectedTool(tool.id)}
-                >
-                  <tool.icon className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top">{tool.label}</TooltipContent>
-            </Tooltip>
-          ))}
-
-          <Separator orientation="vertical" className="h-6 mx-1" />
-
-          {/* More Tools Toggle */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-10 w-10 p-0"
-                onClick={() => setIsExpanded(!isExpanded)}
-              >
-                <ChevronUp
-                  className={`h-4 w-4 transition-transform ${
-                    isExpanded ? "rotate-180" : ""
-                  }`}
-                />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">More Tools</TooltipContent>
-          </Tooltip>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 function CommentPopup({
@@ -252,6 +167,79 @@ function CommentPopup({
       </CardContent>
     </Card>
   );
+}
+
+// Component to render highlighted text with comment indicators
+function HighlightedContent({
+  content,
+  onHighlightClick,
+}: {
+  content: string
+  onHighlightClick: (event: React.MouseEvent, commentId: string) => void
+}) {
+  const renderContentWithHighlights = () => {
+    let lastIndex = 0
+    const elements: React.ReactNode[] = []
+
+    // Sort highlights by start position
+    const sortedHighlights = [...commentHighlights].sort((a, b) => a.start - b.start)
+
+    sortedHighlights.forEach((highlight, index) => {
+      // Add text before highlight
+      if (highlight.start > lastIndex) {
+        elements.push(<span key={`text-${index}`}>{content.slice(lastIndex, highlight.start)}</span>)
+      }
+
+      // Add highlighted text with comment indicator
+      const highlightedText = content.slice(highlight.start, highlight.end)
+      elements.push(
+        <span
+          key={`highlight-${highlight.commentId}`}
+          className="relative bg-yellow-100 border-b-2 border-yellow-400 hover:bg-yellow-200 transition-colors px-1 py-0.5 rounded-sm"
+          data-comment-id={highlight.commentId}
+        >
+          {highlightedText}
+          <span className="absolute -top-2 -right-1 flex -space-x-1">
+            {highlight.authors.slice(0, 2).map((author, i) => (
+              <div
+                key={`${author.initials}-${i}`}
+                className={`w-4 h-4 rounded-full border border-white flex items-center justify-center text-[8px] text-white font-medium cursor-pointer hover:scale-110 transition-transform ${author.color}`}
+                style={{ zIndex: highlight.authors.length - i }}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onHighlightClick(e, highlight.commentId)
+                }}
+              >
+                {author.initials}
+              </div>
+            ))}
+            {highlight.authors.length > 2 && (
+              <div
+                className="w-4 h-4 rounded-full bg-gray-500 border border-white flex items-center justify-center text-[8px] text-white font-medium cursor-pointer hover:scale-110 transition-transform"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onHighlightClick(e, highlight.commentId)
+                }}
+              >
+                +{highlight.authors.length - 2}
+              </div>
+            )}
+          </span>
+        </span>,
+      )
+
+      lastIndex = highlight.end
+    })
+
+    // Add remaining text
+    if (lastIndex < content.length) {
+      elements.push(<span key="text-end">{content.slice(lastIndex)}</span>)
+    }
+
+    return elements
+  }
+
+  return <div className="leading-relaxed">{renderContentWithHighlights()}</div>
 }
 
 export function ContentEditor() {
@@ -331,6 +319,115 @@ Key capabilities include:
   const [popupPosition, setPopupPosition] = React.useState({ x: 0, y: 0 });
   const [replyingTo, setReplyingTo] = React.useState<string | null>(null);
   const [replyText, setReplyText] = React.useState("");
+
+  const [activeCommentId, setActiveCommentId] = React.useState<string | null>(null)
+  const [commentBubblePosition, setCommentBubblePosition] = React.useState({ x: 0, y: 0 })
+  const [showCommentBubble, setShowCommentBubble] = React.useState(false)
+
+  // Mock comment data that matches the highlights
+  const commentThreads = {
+    "1": {
+      id: "1",
+      author: {
+        name: "Sarah Chen",
+        avatar: "/placeholder.svg?height=32&width=32",
+        initials: "SC",
+        role: "Product Designer",
+        color: "bg-blue-500",
+      },
+      content:
+        "This section needs more detail about the user research findings. We should include specific metrics and user feedback to strengthen our argument.",
+      timestamp: "2 hours ago",
+      status: "open",
+      selectedText: "Content writers across multiple domains frequently struggle",
+      likes: 3,
+      isLiked: false,
+      replies: [
+        {
+          id: "1-1",
+          author: {
+            name: "Mike Johnson",
+            avatar: "/placeholder.svg?height=32&width=32",
+            initials: "MJ",
+            role: "UX Researcher",
+            color: "bg-green-500",
+          },
+          content: "I can provide the survey data from last month. We had 247 responses with some great insights.",
+          timestamp: "1 hour ago",
+          likes: 1,
+          isLiked: true,
+        },
+      ],
+    },
+    "2": {
+      id: "2",
+      author: {
+        name: "Emma Davis",
+        avatar: "/placeholder.svg?height=32&width=32",
+        initials: "ED",
+        role: "Content Strategist",
+        color: "bg-purple-500",
+      },
+      content:
+        "Great insights! Can we add some metrics to support this? Maybe include the 40% productivity loss statistic we found in our research.",
+      timestamp: "1 hour ago",
+      status: "resolved",
+      selectedText: "significantly impact productivity, quality, and collaboration effectiveness",
+      likes: 5,
+      isLiked: true,
+      replies: [
+        {
+          id: "2-1",
+          author: {
+            name: "Alex Kim",
+            avatar: "/placeholder.svg?height=32&width=32",
+            initials: "AK",
+            role: "Data Analyst",
+            color: "bg-orange-500",
+          },
+          content: "I've added the metrics to the document. The 40% stat is now included with proper citations.",
+          timestamp: "30 minutes ago",
+          likes: 2,
+          isLiked: false,
+        },
+      ],
+    },
+    "3": {
+      id: "3",
+      author: {
+        name: "David Wilson",
+        avatar: "/placeholder.svg?height=32&width=32",
+        initials: "DW",
+        role: "Product Manager",
+        color: "bg-red-500",
+      },
+      content:
+        "Should we consider adding a section about competitive analysis here? It would help contextualize our solution.",
+      timestamp: "45 minutes ago",
+      status: "open",
+      selectedText: "Solution Overview",
+      likes: 1,
+      isLiked: false,
+      replies: [],
+    },
+  }
+
+  const handleHighlightClick = (event: React.MouseEvent, commentId: string) => {
+    event.stopPropagation()
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
+
+    setCommentBubblePosition({
+      x: rect.right + 10,
+      y: rect.top + window.scrollY - 10,
+    })
+    setActiveCommentId(commentId)
+    setShowCommentBubble(true)
+  }
+
+  const handleCloseCommentBubble = () => {
+    setShowCommentBubble(false)
+    setActiveCommentId(null)
+  }
 
   const handleTextSelection = () => {
     const selection = window.getSelection();
@@ -453,7 +550,6 @@ Key capabilities include:
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="ghost" size="sm">
-                    <Link className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>Insert Link</TooltipContent>
@@ -601,15 +697,21 @@ Key capabilities include:
               />
             </div>
 
-            {/* Content Editor */}
+            {/* Content Editor with Highlights */}
             <div className="flex-1 p-6">
-              <Textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
+              <div
+                className="min-h-full text-base leading-relaxed cursor-text"
                 onMouseUp={handleTextSelection}
-                className="min-h-full resize-none border-none shadow-none focus-visible:ring-0 text-base leading-relaxed"
-                placeholder="Start writing your content..."
-              />
+                style={{ whiteSpace: "pre-wrap" }}
+                onClick={(e) => {
+                  // Close comment bubble when clicking outside
+                  if (!(e.target as HTMLElement).closest("[data-comment-id]")) {
+                    handleCloseCommentBubble()
+                  }
+                }}
+              >
+                <HighlightedContent content={content} onHighlightClick={handleHighlightClick} />
+              </div>
             </div>
           </div>
 
@@ -627,8 +729,25 @@ Key capabilities include:
             />
           )}
 
+          {/* Comment Bubble */}
+          {showCommentBubble && activeCommentId && commentThreads[activeCommentId] && (
+            <CommentBubble
+              comment={commentThreads[activeCommentId]}
+              position={commentBubblePosition}
+              onClose={handleCloseCommentBubble}
+              onLike={(commentId, replyId) => {
+                console.log("Like comment:", commentId, replyId)
+                // Handle like functionality
+              }}
+              onResolve={(commentId) => {
+                console.log("Resolve comment:", commentId)
+                // Handle resolve functionality
+              }}
+            />
+          )}
+
           {/* Comments Panel */}
-          {showComments && !focusMode && (
+          {/* {showComments && !focusMode && (
             <div className="w-80 border-l bg-muted/30">
               <div className="p-4 border-b">
                 <h3 className="font-semibold flex items-center gap-2">
@@ -665,7 +784,6 @@ Key capabilities include:
                           )}
                         </div>
 
-                        {/* Selected Text Context */}
                         <div className="text-xs p-2 bg-yellow-50 border border-yellow-200 rounded">
                           {comment.selectedText}
                         </div>
@@ -674,7 +792,6 @@ Key capabilities include:
                           {comment.content}
                         </p>
 
-                        {/* Replies */}
                         {comment.replies.length > 0 && (
                           <div className="ml-4 space-y-2 border-l-2 border-gray-200 pl-3">
                             {comment.replies.map((reply) => (
@@ -712,7 +829,6 @@ Key capabilities include:
                           </div>
                         )}
 
-                        {/* Reply Input */}
                         {replyingTo === comment.id ? (
                           <div className="space-y-2">
                             <Textarea
@@ -809,7 +925,7 @@ Key capabilities include:
                 </div>
               </div>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Status Bar */}

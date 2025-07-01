@@ -1,7 +1,6 @@
 import Link from "next/link"
-import { AlertCircle, ArrowLeft } from "lucide-react"
+import { AlertCircle } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function AuthCodeErrorPage() {
@@ -24,10 +23,7 @@ export default function AuthCodeErrorPage() {
         </CardContent>
         <CardFooter>
           <Link href="/auth/sign-in" className="w-full">
-            <Button className="w-full">
-              <ArrowLeft className="mr-2 h-4 w-4" />
               Back to sign in
-            </Button>
           </Link>
         </CardFooter>
       </Card>

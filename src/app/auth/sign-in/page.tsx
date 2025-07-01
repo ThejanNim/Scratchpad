@@ -2,7 +2,6 @@
 
 import type * as React from "react"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Eye, EyeOff, Mail, Lock, Chrome } from "lucide-react"
 
@@ -12,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
-import { createClient } from "@/lib/supabase/client"
+import { login } from "./actions"
 
 export default function SignInPage() {
   const [email, setEmail] = useState("")
@@ -20,54 +19,30 @@ export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  const router = useRouter()
-  const supabase = createClient()
 
-  const handleEmailSignIn = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+  // const handleEmailSignIn = async (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   setIsLoading(true)
+  //   setError("")
 
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+  //   try {
+  //     const { error } = await supabase.auth.signInWithPassword({
+  //       email,
+  //       password,
+  //     })
 
-      if (error) {
-        setError(error.message)
-      } else {
-        router.push("/")
-        router.refresh()
-      }
-    } catch (err) {
-      setError(`An unexpected error occurred: ${err}`)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true)
-    setError("")
-
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-
-      if (error) {
-        setError(error.message)
-        setIsLoading(false)
-      }
-    } catch (err) {
-      setError(`An unexpected error occurred: ${err}`)
-      setIsLoading(false)
-    }
-  }
+  //     if (error) {
+  //       setError(error.message)
+  //     } else {
+  //       router.push("/")
+  //       router.refresh()
+  //     }
+  //   } catch (err) {
+  //     setError(`An unexpected error occurred: ${err}`)
+  //   } finally {
+  //     setIsLoading(false)
+  //   }
+  // }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -84,7 +59,7 @@ export default function SignInPage() {
           )}
 
           {/* Google Sign In */}
-          <Button variant="outline" className="w-full bg-transparent" onClick={handleGoogleSignIn} disabled={isLoading}>
+          <Button variant="outline" className="w-full bg-transparent" onClick={() => {}} disabled={isLoading}>
             <Chrome className="mr-2 h-4 w-4" />
             Continue with Google
           </Button>
@@ -99,13 +74,14 @@ export default function SignInPage() {
           </div>
 
           {/* Email Sign In Form */}
-          <form onSubmit={handleEmailSignIn} className="space-y-4">
+          <form className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="Enter your email"
                   value={email}
@@ -122,6 +98,7 @@ export default function SignInPage() {
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={password}
@@ -151,7 +128,7 @@ export default function SignInPage() {
               </Link>
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading} formAction={login}>
               {isLoading ? "Signing in..." : "Sign in"}
             </Button>
           </form>

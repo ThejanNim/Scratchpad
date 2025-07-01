@@ -10,14 +10,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { createClient } from "@/lib/supabase/client"
+import { supabase } from "@/lib/supabase"
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
-  const supabase = createClient()
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -59,10 +58,7 @@ export default function ForgotPasswordPage() {
           </CardContent>
           <CardFooter>
             <Link href="/auth/sign-in" className="w-full">
-              <Button variant="outline" className="w-full bg-transparent">
-                <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to sign in
-              </Button>
             </Link>
           </CardFooter>
         </Card>
@@ -110,10 +106,7 @@ export default function ForgotPasswordPage() {
         </CardContent>
         <CardFooter>
           <Link href="/auth/sign-in" className="w-full">
-            <Button variant="ghost" className="w-full">
-              <ArrowLeft className="mr-2 h-4 w-4" />
               Back to sign in
-            </Button>
           </Link>
         </CardFooter>
       </Card>

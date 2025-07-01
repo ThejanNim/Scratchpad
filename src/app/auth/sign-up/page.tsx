@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
 import { Checkbox } from "@/components/ui/checkbox"
-import { createClient } from "@/lib/supabase/client"
+import { signup } from "../sign-in/actions"
 
 export default function SignUpPage() {
   const [fullName, setFullName] = useState("")
@@ -25,76 +25,53 @@ export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
-  const supabase = createClient()
 
-  const handleEmailSignUp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+  // const handleEmailSignUp = async (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   setIsLoading(true)
+  //   setError("")
 
-    // Validation
-    if (password !== confirmPassword) {
-      setError("Passwords do not match")
-      setIsLoading(false)
-      return
-    }
+  //   // Validation
+  //   if (password !== confirmPassword) {
+  //     setError("Passwords do not match")
+  //     setIsLoading(false)
+  //     return
+  //   }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters long")
-      setIsLoading(false)
-      return
-    }
+  //   if (password.length < 6) {
+  //     setError("Password must be at least 6 characters long")
+  //     setIsLoading(false)
+  //     return
+  //   }
 
-    if (!acceptTerms) {
-      setError("Please accept the terms and conditions")
-      setIsLoading(false)
-      return
-    }
+  //   if (!acceptTerms) {
+  //     setError("Please accept the terms and conditions")
+  //     setIsLoading(false)
+  //     return
+  //   }
 
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-          },
-        },
-      })
+  //   try {
+  //     // const { error } = await supabase.auth.signUp({
+  //     //   email,
+  //     //   password,
+  //     //   options: {
+  //     //     data: {
+  //     //       full_name: fullName,
+  //     //     },
+  //     //   },
+  //     // })
 
-      if (error) {
-        setError(error.message)
-      } else {
-        setSuccess(true)
-      }
-    } catch (err) {
-      setError(`An unexpected error occurred: ${err}`)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleGoogleSignUp = async () => {
-    setIsLoading(true)
-    setError("")
-
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-
-      if (error) {
-        setError(error.message)
-        setIsLoading(false)
-      }
-    } catch (err) {
-      setError(`An unexpected error occurred: ${err}`)
-      setIsLoading(false)
-    }
-  }
+  //     // if (error) {
+  //     //   setError(error.message)
+  //     // } else {
+  //     //   setSuccess(true)
+  //     // }
+  //   } catch (err) {
+  //     setError(`An unexpected error occurred: ${err}`)
+  //   } finally {
+  //     setIsLoading(false)
+  //   }
+  // }
 
   if (success) {
     return (
@@ -137,7 +114,7 @@ export default function SignUpPage() {
           )}
 
           {/* Google Sign Up */}
-          <Button variant="outline" className="w-full bg-transparent" onClick={handleGoogleSignUp} disabled={isLoading}>
+          <Button variant="outline" className="w-full bg-transparent" onClick={() => {}} disabled={isLoading}>
             <Chrome className="mr-2 h-4 w-4" />
             Continue with Google
           </Button>
@@ -152,7 +129,7 @@ export default function SignUpPage() {
           </div>
 
           {/* Email Sign Up Form */}
-          <form onSubmit={handleEmailSignUp} className="space-y-4">
+          <form action={signup} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="fullName">Full Name</Label>
               <div className="relative">
