@@ -20,30 +20,6 @@ export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
 
-  // const handleEmailSignIn = async (e: React.FormEvent) => {
-  //   e.preventDefault()
-  //   setIsLoading(true)
-  //   setError("")
-
-  //   try {
-  //     const { error } = await supabase.auth.signInWithPassword({
-  //       email,
-  //       password,
-  //     })
-
-  //     if (error) {
-  //       setError(error.message)
-  //     } else {
-  //       router.push("/")
-  //       router.refresh()
-  //     }
-  //   } catch (err) {
-  //     setError(`An unexpected error occurred: ${err}`)
-  //   } finally {
-  //     setIsLoading(false)
-  //   }
-  // }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">

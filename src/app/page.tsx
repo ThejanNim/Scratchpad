@@ -21,15 +21,21 @@ import {
 import { Separator } from "@radix-ui/react-separator";
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from "next/navigation";
+import { UserContext, UserProvider } from "@/context/UserContext";
 
 export default async function Home() {
   const supabase = await createClient();
 
   const {data: { user }} = await supabase.auth.getUser();
 
+  if (!user) {
+    redirect('/auth/sign-in');
+  }
+
   const { data: collectionsData, error: collectionsError } = await supabase
     .from("collection")
     .select("*")
+    .eq("user_id", user.id) 
     .order("name");
 
   const { data: documentsData, error: documentsError } = await supabase
@@ -60,10 +66,12 @@ export default async function Home() {
   };
 
   return (
-    <SidebarProvider>
+    // <UserContext.Provider value={{ user }}>
+    <UserProvider user={user}>
+      <SidebarProvider>
       <div className="flex h-screen w-full">
         <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel defaultSize={20} minSize={15} maxSize={35}>
+          <ResizablePanel defaultSize={12} minSize={8} maxSize={35}>
             <div className="h-full flex flex-col">
               <AppSidebar
                 collections={collectionsData}
@@ -108,5 +116,7 @@ export default async function Home() {
         </ResizablePanelGroup>
       </div>
     </SidebarProvider>
+    </UserProvider>
+    // </UserContext.Provider>
   );
 }

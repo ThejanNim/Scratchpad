@@ -15,7 +15,7 @@ import { FolderOpen } from "lucide-react";
 import React from "react";
 import Collections from "../Collections/Collections";
 
-export interface Collection {
+export interface ICollection {
   id: string;
   name: string;
   parent_id?: string | null;
@@ -23,7 +23,7 @@ export interface Collection {
   updated_at?: string;
 }
 
-export interface DocumentItem {
+export interface IDocumentItem {
   id: string;
   collection_id: string;
   title: string;
@@ -34,8 +34,8 @@ export interface DocumentItem {
 }
 
 interface SidebarProps extends React.ComponentProps<typeof Sidebar> {
-  collections: Collection[] | null;
-  documents: DocumentItem[] | null;
+  collections: ICollection[] | null;
+  documents: IDocumentItem[] | null;
   user?: any | null;
   handleSignOut: any;
 }

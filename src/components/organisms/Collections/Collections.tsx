@@ -9,51 +9,35 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-  ChevronRight,
-  Copy,
-  Edit,
-  File,
-  Folder,
-  MoreHorizontal,
   Plus,
-  Trash2,
 } from "lucide-react";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Collection, DocumentItem } from "@/components/organisms/Sidebar/Sidebar";
+  ICollection,
+  IDocumentItem,
+} from "@/components/organisms/Sidebar/Sidebar";
+import CollectionTree from "@/components/molecules/CollectionTree/CollectionTree";
+import { useUser } from "@/context/UserContext";
 
 export default function Collections({
   collections: initialCollections,
   documents: initialDocuments,
 }: {
-  collections: Collection[] | null;
-  documents: DocumentItem[] | null;
+  collections: ICollection[] | null;
+  documents: IDocumentItem[] | null;
 }) {
   // Add state management for collections and documents
-  const [collections, setCollections] = React.useState<Collection[] | null>(
+  const [collections, setCollections] = React.useState<ICollection[] | null>(
     initialCollections
   );
-  const [documents, setDocuments] = React.useState<DocumentItem[] | null>(initialDocuments);
+  const [documents, setDocuments] = React.useState<IDocumentItem[] | null>(
+    initialDocuments
+  );
   const [openSections, setOpenSections] = React.useState<string[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
+  const user = useUser();
 
   // Update state when props change (when parent re-renders)
   React.useEffect(() => {
@@ -66,8 +50,8 @@ export default function Collections({
 
   const buildTree = (
     parentId: string | null = null
-  ): (Collection | DocumentItem)[] => {
-    const items: (Collection | DocumentItem)[] = [];
+  ): (ICollection | IDocumentItem)[] => {
+    const items: (ICollection | IDocumentItem)[] = [];
 
     // Add child collections
     const childCollections = collections?.filter(
@@ -75,7 +59,7 @@ export default function Collections({
     );
 
     if (childCollections) {
-        items.push(...childCollections);
+      items.push(...childCollections);
     }
 
     // Add documents for this collection
@@ -112,6 +96,7 @@ export default function Collections({
         .insert({
           name: collectionName.trim(),
           parent_id: parentId || null,
+          user_id: user.user?.id,
         })
         .select()
         .single();
@@ -154,7 +139,9 @@ export default function Collections({
           if (deleteError) throw deleteError;
 
           // Update local state
-          setCollections((prev) => prev?.filter((c) => c.id !== collectionId) ?? []);
+          setCollections(
+            (prev) => prev?.filter((c) => c.id !== collectionId) ?? []
+          );
           break;
 
         case "rename":
@@ -171,10 +158,11 @@ export default function Collections({
           if (updateError) throw updateError;
 
           // Update local state
-          setCollections((prev) =>
-            prev?.map((c) =>
-              c.id === collectionId ? { ...c, name: data.name } : c
-            ) ?? []
+          setCollections(
+            (prev) =>
+              prev?.map((c) =>
+                c.id === collectionId ? { ...c, name: data.name } : c
+              ) ?? []
           );
           break;
 
@@ -212,172 +200,7 @@ export default function Collections({
     documentId: string,
     action: "delete" | "rename" | "duplicate"
   ) => {
-    // Similar implementation for documents
     console.log("Document action:", action, documentId);
-  };
-
-  const renderCollectionTree = (
-    parentId: string | null = null,
-    level: number = 0
-  ): React.ReactNode => {
-    const items = buildTree(parentId);
-
-    return items.map((item) => {
-      const isCollection = "parent_id" in item && !("collection_id" in item);
-      const isOpen = openSections.includes(item.id);
-
-      if (isCollection) {
-        const collection = item as Collection;
-        const hasChildren =
-          collections?.some((c) => c.parent_id === collection.id) ||
-          (documents?.some((d) => d.collection_id === collection.id) ?? false);
-
-        return (
-          <Collapsible
-            key={collection.id}
-            open={isOpen}
-            onOpenChange={() => toggleSection(collection.id)}
-            className="group/collapsible"
-          >
-            <SidebarMenuItem>
-              <div className="flex items-center group/collection-item">
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton
-                    className="flex-1"
-                    style={{ paddingLeft: `${level * 1}rem` }}
-                  >
-                    {hasChildren && (
-                      <ChevronRight className="transition-transform group-data-[state=open]/collapsible:rotate-90 size-4" />
-                    )}
-                    <Folder className="size-4" />
-                    <span>{collection.name}</span>
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 w-6 p-0 opacity-0 group-hover/collection-item:opacity-100 transition-opacity"
-                      onClick={(e) => e.stopPropagation()}
-                      disabled={isLoading}
-                    >
-                      <MoreHorizontal className="h-3 w-3" />
-                      <span className="sr-only">Collection options</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" side="right">
-                    <DropdownMenuItem
-                      onClick={() => createNewCollection(collection.id)}
-                      disabled={isLoading}
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      New Subcollection
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() =>
-                        handleCollectionAction(collection.id, "rename")
-                      }
-                      disabled={isLoading}
-                    >
-                      <Edit className="h-4 w-4 mr-2" />
-                      Rename
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() =>
-                        handleCollectionAction(collection.id, "duplicate")
-                      }
-                      disabled={isLoading}
-                    >
-                      <Copy className="h-4 w-4 mr-2" />
-                      Duplicate
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() =>
-                        handleCollectionAction(collection.id, "delete")
-                      }
-                      className="text-red-600 focus:text-red-600"
-                      disabled={isLoading}
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {renderCollectionTree(collection.id, level + 1)}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        );
-      } else {
-        // Render document
-        const document = item as DocumentItem;
-
-        return (
-          <SidebarMenuSubItem key={document.id}>
-            <div className="flex items-center group/item w-full">
-              <SidebarMenuSubButton
-                asChild
-                className="flex-1"
-                style={{ paddingLeft: `${level * 1}rem` }}
-              >
-                <a href="#" className="flex items-center gap-2">
-                  <File className="size-3" />
-                  <span>{document.title}</span>
-                </a>
-              </SidebarMenuSubButton>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-5 w-5 p-0 opacity-0 group-hover/item:opacity-100 transition-opacity"
-                    onClick={(e) => e.stopPropagation()}
-                    disabled={isLoading}
-                  >
-                    <MoreHorizontal className="h-3 w-3" />
-                    <span className="sr-only">Document options</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" side="right">
-                  <DropdownMenuItem
-                    onClick={() => handleDocumentAction(document.id, "rename")}
-                    disabled={isLoading}
-                  >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Rename
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() =>
-                      handleDocumentAction(document.id, "duplicate")
-                    }
-                    disabled={isLoading}
-                  >
-                    <Copy className="h-4 w-4 mr-2" />
-                    Duplicate
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleDocumentAction(document.id, "delete")}
-                    className="text-red-600 focus:text-red-600"
-                    disabled={isLoading}
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </SidebarMenuSubItem>
-        );
-      }
-    });
   };
 
   return (
@@ -388,7 +211,20 @@ export default function Collections({
         <span className="sr-only">Add Collection</span>
       </SidebarGroupAction>
       <SidebarGroupContent>
-        <SidebarMenu>{renderCollectionTree()}</SidebarMenu>
+        <SidebarMenu>
+          <CollectionTree
+            buildTree={buildTree}
+            parentId={null}
+            openSections={openSections}
+            collections={collections}
+            documents={documents}
+            handleCollectionAction={handleCollectionAction}
+            createNewCollection={createNewCollection}
+            toggleSection={toggleSection}
+            isLoading={isLoading}
+            handleDocumentAction={handleDocumentAction}
+          />
+        </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
   );

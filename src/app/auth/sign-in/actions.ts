@@ -7,21 +7,14 @@ import { redirect } from 'next/navigation'
 export async function login(formData: FormData) {
   const supabase = await createClient()
 
-  console.log("test test: ", formData);
-
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
   const data = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
   }
 
-  const { error } = await supabase.auth.signInWithPassword(data)
-
-  console.log("login error: ", error);
+  const { data: { user }, error } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
-    console.log("login error: ", error);
     redirect('/auth/auth-code-error')
   }
 
