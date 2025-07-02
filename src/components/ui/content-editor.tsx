@@ -109,7 +109,7 @@ function CommentPopup({
         <div className="space-y-3">
           <div className="text-sm">
             <span className="font-medium">Selected text:</span>
-            <div className="mt-1 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs">"{selectedText}"</div>
+            <div className="mt-1 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs">{selectedText}</div>
           </div>
           <Textarea
             placeholder="Add your comment or question..."
@@ -138,7 +138,7 @@ function HighlightOverlay({
   onHighlightClick,
 }: {
   highlights: CommentHighlight[]
-  contentRef: React.RefObject<HTMLDivElement>
+  contentRef: React.RefObject<HTMLDivElement | null>
   onHighlightClick: (event: React.MouseEvent, commentId: string) => void
 }) {
   const [highlightElements, setHighlightElements] = React.useState<
