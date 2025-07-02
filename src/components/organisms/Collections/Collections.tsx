@@ -116,6 +116,38 @@ export default function Collections({
     }
   };
 
+  const createNewDocument = async (collectionId: string) => {
+    const documentTitle = prompt("Enter document title:");
+    if (!documentTitle?.trim()) return;
+
+    setIsLoading(true);
+    try {
+      const supabase = createClient();
+
+      const { data, error } = await supabase
+        .from("document")
+        .insert({
+          title: documentTitle.trim(),
+          collection_id: collectionId,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Update local state immediately
+      setDocuments((prev) => [...(prev ?? []), data]);
+
+      // Optionally refresh the page for full sync
+      router.refresh();
+    } catch (error) {
+      console.error("Error creating document:", error);
+      alert("Failed to create document");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   const handleCollectionAction = async (
     collectionId: string,
     action: "delete" | "rename" | "duplicate"
@@ -220,6 +252,7 @@ export default function Collections({
             documents={documents}
             handleCollectionAction={handleCollectionAction}
             createNewCollection={createNewCollection}
+            createNewDocument={createNewDocument}
             toggleSection={toggleSection}
             isLoading={isLoading}
             handleDocumentAction={handleDocumentAction}

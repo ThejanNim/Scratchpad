@@ -42,6 +42,7 @@ interface CollectionTreeProps extends Pick<DocumentItemProps, 'level' | 'isLoadi
     action: "rename" | "duplicate" | "delete"
   ) => void;
   createNewCollection: (parentId?: string) => void;
+  createNewDocument: (collectionId: string) => void;
   toggleSection: (sectionId: string) => void;
 }
 
@@ -56,6 +57,7 @@ export default function CollectionTree({
   handleDocumentAction,
   handleCollectionAction,
   createNewCollection,
+  createNewDocument,
   toggleSection,
 }: CollectionTreeProps) {
   const items = buildTree(parentId);
@@ -152,7 +154,7 @@ export default function CollectionTree({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" side="right">
                   <DropdownMenuItem
-                    onClick={() => {}}
+                    onClick={() => createNewDocument(collection.id)}
                     disabled={isLoading}
                   >
                     <File className="h-4 w-4 mr-2" />
@@ -183,6 +185,7 @@ export default function CollectionTree({
                     handleDocumentAction,
                     handleCollectionAction,
                     createNewCollection,
+                    createNewDocument,
                     toggleSection,
                   }}
                 />

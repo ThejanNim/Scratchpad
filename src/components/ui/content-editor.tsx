@@ -1,114 +1,80 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 import {
   Bold,
   Italic,
   Underline,
-  Link,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
   List,
   ListOrdered,
   Quote,
-  Image,
+  Save,
+  Users,
   MessageSquare,
   Eye,
-  Save,
-  Share2,
-  MoreHorizontal,
-  HighlighterIcon as Highlight,
-  BookOpen,
-  Clock,
-  X,
-  Send,
-} from "lucide-react";
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Card, CardContent } from "@/components/ui/card"
+import { Textarea } from "@/components/ui/textarea"
+import { CommentBubble } from "@/components/ui/comment-bubble"
+import { FloatingToolbar } from "./floating-toolbar"
 
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Card, CardContent } from "@/components/ui/card";
-import { FloatingToolbar } from "./floating-toolbar";
-import { CommentBubble } from "./comment-bubble";
+// Mock data for team members
+const teamMembers = [
+  { id: "1", initials: "SC", color: "bg-blue-500", name: "Sarah Chen" },
+  { id: "2", initials: "MJ", color: "bg-green-500", name: "Mike Johnson" },
+  { id: "3", initials: "ED", color: "bg-purple-500", name: "Emma Davis" },
+  { id: "4", initials: "AK", color: "bg-orange-500", name: "Alex Kim" },
+  { id: "5", initials: "DW", color: "bg-red-500", name: "David Wilson" },
+]
 
-const collaborators = [
-  {
-    id: 1,
+// Comment highlight interface
+interface CommentHighlight {
+  id: string
+  text: string
+  commentId: string
+  authors: { initials: string; color: string }[]
+  startOffset: number
+  endOffset: number
+}
+
+const mockComment = {
+  id: "1",
+  author: {
     name: "Sarah Chen",
     avatar: "/placeholder.svg?height=32&width=32",
     initials: "SC",
-    status: "online",
+    role: "Product Designer",
+    color: "bg-blue-500",
   },
-  {
-    id: 2,
-    name: "Mike Johnson",
-    avatar: "/placeholder.svg?height=32&width=32",
-    initials: "MJ",
-    status: "away",
-  },
-  {
-    id: 3,
-    name: "Emma Davis",
-    avatar: "/placeholder.svg?height=32&width=32",
-    initials: "ED",
-    status: "online",
-  },
-];
-
-const commentHighlights = [
-  {
-    start: 20,
-    end: 80,
-    commentId: "1",
-    authors: [
-      { initials: "SC", color: "bg-blue-500" },
-      { initials: "MJ", color: "bg-green-500" },
-    ],
-  },
-  {
-    start: 150,
-    end: 220,
-    commentId: "2",
-    authors: [
-      { initials: "ED", color: "bg-purple-500" },
-      { initials: "AK", color: "bg-orange-500" },
-    ],
-  },
-  { start: 300, end: 320, commentId: "3", authors: [{ initials: "DW", color: "bg-red-500" }] },
-]
-
-interface Comment {
-  id: string;
-  author: string;
-  avatar: string;
-  initials: string;
-  content: string;
-  timestamp: string;
-  resolved: boolean;
-  selectedText: string;
-  position: { start: number; end: number };
-  replies: Array<{
-    id: string;
-    author: string;
-    avatar: string;
-    initials: string;
-    content: string;
-    timestamp: string;
-    type: "comment" | "question";
-  }>;
+  content:
+    "This section needs more detail about the user research findings. We should include specific metrics and user feedback to strengthen our argument.",
+  timestamp: "2 hours ago",
+  status: "open" as const,
+  selectedText: "Content writers across multiple domains frequently struggle",
+  likes: 3,
+  isLiked: false,
+  replies: [
+    {
+      id: "1-1",
+      author: {
+        name: "Mike Johnson",
+        avatar: "/placeholder.svg?height=32&width=32",
+        initials: "MJ",
+        role: "UX Researcher",
+        color: "bg-green-500",
+      },
+      content: "I can provide the survey data from last month. We had 247 responses with some great insights.",
+      timestamp: "1 hour ago",
+      likes: 1,
+      isLiked: true,
+    },
+  ],
 }
 
 function CommentPopup({
@@ -117,19 +83,19 @@ function CommentPopup({
   onAddComment,
   onCancel,
 }: {
-  selectedText: string;
-  position: { x: number; y: number };
-  onAddComment: (comment: string) => void;
-  onCancel: () => void;
+  selectedText: string
+  position: { x: number; y: number }
+  onAddComment: (comment: string) => void
+  onCancel: () => void
 }) {
-  const [comment, setComment] = React.useState("");
+  const [comment, setComment] = React.useState("")
 
   const handleSubmit = () => {
     if (comment.trim()) {
-      onAddComment(comment);
-      setComment("");
+      onAddComment(comment)
+      setComment("")
     }
-  };
+  }
 
   return (
     <Card
@@ -143,9 +109,7 @@ function CommentPopup({
         <div className="space-y-3">
           <div className="text-sm">
             <span className="font-medium">Selected text:</span>
-            <div className="mt-1 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs">
-              {selectedText}
-            </div>
+            <div className="mt-1 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs">"{selectedText}"</div>
           </div>
           <Textarea
             placeholder="Add your comment or question..."
@@ -155,51 +119,133 @@ function CommentPopup({
           />
           <div className="flex items-center justify-between">
             <Button variant="ghost" size="sm" onClick={onCancel}>
-              <X className="h-4 w-4 mr-1" />
               Cancel
             </Button>
             <Button size="sm" onClick={handleSubmit} disabled={!comment.trim()}>
-              <Send className="h-4 w-4 mr-1" />
               Add Comment
             </Button>
           </div>
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
-// Component to render highlighted text with comment indicators
-function HighlightedContent({
-  content,
+// Separate overlay component for highlights
+function HighlightOverlay({
+  highlights,
+  contentRef,
   onHighlightClick,
 }: {
-  content: string
+  highlights: CommentHighlight[]
+  contentRef: React.RefObject<HTMLDivElement>
   onHighlightClick: (event: React.MouseEvent, commentId: string) => void
 }) {
-  const renderContentWithHighlights = () => {
-    let lastIndex = 0
-    const elements: React.ReactNode[] = []
+  const [highlightElements, setHighlightElements] = React.useState<
+    Array<{
+      id: string
+      rect: DOMRect
+      highlight: CommentHighlight
+    }>
+  >([])
 
-    // Sort highlights by start position
-    const sortedHighlights = [...commentHighlights].sort((a, b) => a.start - b.start)
+  React.useEffect(() => {
+    if (!contentRef.current) return
 
-    sortedHighlights.forEach((highlight, index) => {
-      // Add text before highlight
-      if (highlight.start > lastIndex) {
-        elements.push(<span key={`text-${index}`}>{content.slice(lastIndex, highlight.start)}</span>)
-      }
+    const updateHighlights = () => {
+      const textContent = contentRef.current?.textContent || ""
+      const newElements: Array<{ id: string; rect: DOMRect; highlight: CommentHighlight }> = []
 
-      // Add highlighted text with comment indicator
-      const highlightedText = content.slice(highlight.start, highlight.end)
-      elements.push(
-        <span
-          key={`highlight-${highlight.commentId}`}
-          className="relative bg-yellow-100 border-b-2 border-yellow-400 hover:bg-yellow-200 transition-colors px-1 py-0.5 rounded-sm"
-          data-comment-id={highlight.commentId}
-        >
-          {highlightedText}
-          <span className="absolute -top-2 -right-1 flex -space-x-1">
+      highlights.forEach((highlight) => {
+        const startIndex = textContent.indexOf(highlight.text)
+        if (startIndex !== -1) {
+          // Create a temporary range to get the position
+          const range = document.createRange()
+
+          // Find the text node that contains our text
+          const walker = document.createTreeWalker(contentRef.current!, NodeFilter.SHOW_TEXT, null)
+
+          let textNode = walker.nextNode()
+          let currentOffset = 0
+
+          while (textNode) {
+            const nodeLength = textNode.textContent?.length || 0
+            if (currentOffset + nodeLength > startIndex) {
+              // This text node contains our highlight start
+              try {
+                const startInNode = startIndex - currentOffset
+                const endInNode = Math.min(startInNode + highlight.text.length, nodeLength)
+
+                range.setStart(textNode, startInNode)
+                range.setEnd(textNode, endInNode)
+
+                const rect = range.getBoundingClientRect()
+                const containerRect = contentRef.current!.getBoundingClientRect()
+
+                // Convert to relative position
+                const relativeRect = new DOMRect(
+                  rect.left - containerRect.left,
+                  rect.top - containerRect.top,
+                  rect.width,
+                  rect.height,
+                )
+
+                newElements.push({
+                  id: highlight.id,
+                  rect: relativeRect,
+                  highlight,
+                })
+                break
+              } catch (error) {
+                console.warn("Could not create range for highlight:", error)
+              }
+            }
+            currentOffset += nodeLength
+            textNode = walker.nextNode()
+          }
+        }
+      })
+
+      setHighlightElements(newElements)
+    }
+
+    // Update highlights when content changes
+    const observer = new MutationObserver(updateHighlights)
+    observer.observe(contentRef.current, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    })
+
+    // Initial update
+    updateHighlights()
+
+    return () => observer.disconnect()
+  }, [highlights, contentRef])
+
+  return (
+    <div className="absolute inset-0 pointer-events-none">
+      {highlightElements.map(({ id, rect, highlight }) => (
+        <div key={id} className="absolute pointer-events-auto">
+          {/* Highlight background */}
+          <div
+            className="absolute bg-yellow-100 border-b-2 border-yellow-400 hover:bg-yellow-200 transition-colors cursor-pointer rounded-sm"
+            style={{
+              left: rect.left,
+              top: rect.top,
+              width: rect.width,
+              height: rect.height,
+            }}
+            onClick={(e) => onHighlightClick(e, highlight.commentId)}
+          />
+          {/* Comment badges */}
+          <div
+            className="absolute flex -space-x-1"
+            style={{
+              left: rect.left + rect.width - 8,
+              top: rect.top - 8,
+            }}
+          >
             {highlight.authors.slice(0, 2).map((author, i) => (
               <div
                 key={`${author.initials}-${i}`}
@@ -224,730 +270,314 @@ function HighlightedContent({
                 +{highlight.authors.length - 2}
               </div>
             )}
-          </span>
-        </span>,
-      )
-
-      lastIndex = highlight.end
-    })
-
-    // Add remaining text
-    if (lastIndex < content.length) {
-      elements.push(<span key="text-end">{content.slice(lastIndex)}</span>)
-    }
-
-    return elements
-  }
-
-  return <div className="leading-relaxed">{renderContentWithHighlights()}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
 }
 
 export function ContentEditor() {
-  const [title, setTitle] = React.useState("Website Redesign Project Brief");
-  const [content, setContent] = React.useState(`# Problem Statement
+  const [title, setTitle] = React.useState("Collaborative Content Strategy Document")
+  const [content, setContent] =
+    React.useState(`Content writers across multiple domains frequently struggle with maintaining consistency, managing feedback, and collaborating effectively with team members throughout the content creation process.
 
-Content writers across multiple domains frequently struggle with issues throughout the entire content development lifecycle that significantly impact productivity, quality, and collaboration effectiveness.
+This challenge significantly impact productivity, quality, and collaboration effectiveness, leading to delayed projects, inconsistent messaging, and frustrated team members who struggle to provide and incorporate feedback efficiently.
 
-## Sub Problems
+Solution Overview
 
-### Fragmented Collaboration and Feedback Loops
+Our collaborative document platform addresses these pain points by providing a seamless editing experience that integrates real-time feedback, version control, and team collaboration features into a single, intuitive interface.`)
 
-The collaboration process becomes fragmented when writers need stakeholder confirmations and feedback. Input gets scattered across emails, document comments, and chat platforms, making it hard to track and address all requirements.
-
-### Disorganized Research and Content Referencing
-
-Writers often collect key information from multiple sources during the research phase, but lack a structured way to highlight, link, and organize those insights. As a result, important points get buried in notes or browser tabs.
-
-## Solution Overview
-
-A unified content workspace that streamlines the entire content development lifecycle—from research to collaboration to version management.
-
-Key capabilities include:
-- Integrated Research Hub
-- Smart Drafting Environment  
-- Centralized Feedback & Review System
-- Version & Change Tracking`);
-
-  const [showComments, setShowComments] = React.useState(true);
-  const [focusMode, setFocusMode] = React.useState(false);
-  const [comments, setComments] = React.useState<Comment[]>([
+  // Initialize comment highlights
+  const [commentHighlights, setCommentHighlights] = React.useState<CommentHighlight[]>([
     {
-      id: "1",
-      author: "Sarah Chen",
-      avatar: "/placeholder.svg?height=24&width=24",
-      initials: "SC",
-      content:
-        "This section needs more detail about the user research findings.",
-      timestamp: "2 hours ago",
-      resolved: false,
-      selectedText:
-        "Content writers across multiple domains frequently struggle",
-      position: { start: 20, end: 80 },
-      replies: [],
-    },
-    {
-      id: "2",
-      author: "Mike Johnson",
-      avatar: "/placeholder.svg?height=24&width=24",
-      initials: "MJ",
-      content: "Great insights! Can we add some metrics to support this?",
-      timestamp: "1 hour ago",
-      resolved: true,
-      selectedText:
-        "significantly impact productivity, quality, and collaboration effectiveness",
-      position: { start: 150, end: 220 },
-      replies: [
-        {
-          id: "2-1",
-          author: "Emma Davis",
-          avatar: "/placeholder.svg?height=24&width=24",
-          initials: "ED",
-          content: "I can provide some statistics from our recent survey.",
-          timestamp: "30 minutes ago",
-          type: "comment",
-        },
+      id: "highlight-1",
+      text: "Content writers across multiple domains frequently struggle",
+      commentId: "1",
+      authors: [
+        { initials: "SC", color: "bg-blue-500" },
+        { initials: "MJ", color: "bg-green-500" },
       ],
+      startOffset: 0,
+      endOffset: 53,
     },
-  ]);
+    {
+      id: "highlight-2",
+      text: "productivity, quality, and collaboration effectiveness",
+      commentId: "2",
+      authors: [
+        { initials: "ED", color: "bg-purple-500" },
+        { initials: "AK", color: "bg-orange-500" },
+      ],
+      startOffset: 200,
+      endOffset: 252,
+    },
+    {
+      id: "highlight-3",
+      text: "document platform",
+      commentId: "3",
+      authors: [{ initials: "DW", color: "bg-red-500" }],
+      startOffset: 450,
+      endOffset: 467,
+    },
+  ])
 
-  const [selectedText, setSelectedText] = React.useState("");
-  const [selectionPosition, setSelectionPosition] = React.useState<{
-    start: number;
-    end: number;
-  } | null>(null);
-  const [showCommentPopup, setShowCommentPopup] = React.useState(false);
-  const [popupPosition, setPopupPosition] = React.useState({ x: 0, y: 0 });
-  const [replyingTo, setReplyingTo] = React.useState<string | null>(null);
-  const [replyText, setReplyText] = React.useState("");
-
-  const [activeCommentId, setActiveCommentId] = React.useState<string | null>(null)
-  const [commentBubblePosition, setCommentBubblePosition] = React.useState({ x: 0, y: 0 })
+  const [selectedText, setSelectedText] = React.useState("")
+  const [selectionPosition, setSelectionPosition] = React.useState({ x: 0, y: 0 })
+  const [showCommentPopup, setShowCommentPopup] = React.useState(false)
   const [showCommentBubble, setShowCommentBubble] = React.useState(false)
+  const [commentBubblePosition, setCommentBubblePosition] = React.useState({ x: 0, y: 0 })
+  const contentRef = React.useRef<HTMLDivElement>(null)
 
-  // Mock comment data that matches the highlights
-  const commentThreads = {
-    "1": {
-      id: "1",
-      author: {
-        name: "Sarah Chen",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "SC",
-        role: "Product Designer",
-        color: "bg-blue-500",
-      },
-      content:
-        "This section needs more detail about the user research findings. We should include specific metrics and user feedback to strengthen our argument.",
-      timestamp: "2 hours ago",
-      status: "open" as const,
-      selectedText: "Content writers across multiple domains frequently struggle",
-      likes: 3,
-      isLiked: false,
-      replies: [
-        {
-          id: "1-1",
-          author: {
-            name: "Mike Johnson",
-            avatar: "/placeholder.svg?height=32&width=32",
-            initials: "MJ",
-            role: "UX Researcher",
-            color: "bg-green-500",
-          },
-          content: "I can provide the survey data from last month. We had 247 responses with some great insights.",
-          timestamp: "1 hour ago",
-          likes: 1,
-          isLiked: true,
-        },
-      ],
-    },
-    "2": {
-      id: "2",
-      author: {
-        name: "Emma Davis",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "ED",
-        role: "Content Strategist",
-        color: "bg-purple-500",
-      },
-      content:
-        "Great insights! Can we add some metrics to support this? Maybe include the 40% productivity loss statistic we found in our research.",
-      timestamp: "1 hour ago",
-      status: "resolved" as const,
-      selectedText: "significantly impact productivity, quality, and collaboration effectiveness",
-      likes: 5,
-      isLiked: true,
-      replies: [
-        {
-          id: "2-1",
-          author: {
-            name: "Alex Kim",
-            avatar: "/placeholder.svg?height=32&width=32",
-            initials: "AK",
-            role: "Data Analyst",
-            color: "bg-orange-500",
-          },
-          content: "I've added the metrics to the document. The 40% stat is now included with proper citations.",
-          timestamp: "30 minutes ago",
-          likes: 2,
-          isLiked: false,
-        },
-      ],
-    },
-    "3": {
-      id: "3",
-      author: {
-        name: "David Wilson",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "DW",
-        role: "Product Manager",
-        color: "bg-red-500",
-      },
-      content:
-        "Should we consider adding a section about competitive analysis here? It would help contextualize our solution.",
-      timestamp: "45 minutes ago",
-      status: "open" as const,
-      selectedText: "Solution Overview",
-      likes: 1,
-      isLiked: false,
-      replies: [],
-    },
+  const wordCount = content.split(/\s+/).filter((word) => word.length > 0).length
+  const readingTime = Math.ceil(wordCount / 200)
+
+  const handleTextSelection = () => {
+    const selection = window.getSelection()
+    if (selection && selection.toString().trim()) {
+      const range = selection.getRangeAt(0)
+      const rect = range.getBoundingClientRect()
+      setSelectedText(selection.toString())
+      setSelectionPosition({
+        x: rect.left + window.scrollX,
+        y: rect.bottom + window.scrollY + 10,
+      })
+      setShowCommentPopup(true)
+    }
+  }
+
+  const handleAddComment = (comment: string) => {
+    console.log("Adding comment:", comment, "for text:", selectedText)
+
+    const selectionStart = content.indexOf(selectedText)
+    if (selectionStart !== -1) {
+      const newHighlight: CommentHighlight = {
+        id: `highlight-${Date.now()}`,
+        text: selectedText,
+        commentId: `comment-${Date.now()}`,
+        authors: [{ initials: "YU", color: "bg-indigo-500" }],
+        startOffset: selectionStart,
+        endOffset: selectionStart + selectedText.length,
+      }
+
+      setCommentHighlights((prev) => [...prev, newHighlight])
+    }
+
+    setShowCommentPopup(false)
+    setSelectedText("")
   }
 
   const handleHighlightClick = (event: React.MouseEvent, commentId: string) => {
     event.stopPropagation()
-    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
-
+    const rect = (event.target as HTMLElement).getBoundingClientRect()
     setCommentBubblePosition({
-      x: rect.right + 10,
-      y: rect.top + window.scrollY - 10,
+      x: rect.left + window.scrollX,
+      y: rect.bottom + window.scrollY + 10,
     })
-    setActiveCommentId(commentId)
     setShowCommentBubble(true)
   }
 
-  const handleCloseCommentBubble = () => {
-    setShowCommentBubble(false)
-    setActiveCommentId(null)
+  const handleContentChange = (e: React.FormEvent<HTMLDivElement>) => {
+    const element = e.target as HTMLDivElement
+    const newContent = element.textContent || ""
+    setContent(newContent)
   }
 
-  const handleTextSelection = () => {
-    const selection = window.getSelection();
-    if (selection && selection.toString().trim()) {
-      const selectedText = selection.toString();
-      const range = selection.getRangeAt(0);
-      const rect = range.getBoundingClientRect();
-
-      setSelectedText(selectedText);
-      setSelectionPosition({
-        start: range.startOffset,
-        end: range.endOffset,
-      });
-      setPopupPosition({
-        x: rect.left + window.scrollX,
-        y: rect.bottom + window.scrollY + 10,
-      });
-      setShowCommentPopup(true);
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      switch (e.key) {
+        case "b":
+          e.preventDefault()
+          document.execCommand("bold")
+          break
+        case "i":
+          e.preventDefault()
+          document.execCommand("italic")
+          break
+        case "u":
+          e.preventDefault()
+          document.execCommand("underline")
+          break
+        case "s":
+          e.preventDefault()
+          console.log("Saving document...")
+          break
+      }
     }
-  };
+  }
 
-  const handleAddComment = (commentText: string) => {
-    if (selectionPosition) {
-      const newComment: Comment = {
-        id: Date.now().toString(),
-        author: "Current User",
-        avatar: "/placeholder.svg?height=24&width=24",
-        initials: "CU",
-        content: commentText,
-        timestamp: "Just now",
-        resolved: false,
-        selectedText,
-        position: selectionPosition,
-        replies: [],
-      };
-      setComments([...comments, newComment]);
+  // Initialize content only once
+  React.useEffect(() => {
+    if (contentRef.current && !contentRef.current.textContent) {
+      contentRef.current.textContent = content
     }
-    setShowCommentPopup(false);
-    setSelectedText("");
-    setSelectionPosition(null);
-  };
-
-  const handleResolveComment = (commentId: string) => {
-    setComments(
-      comments.map((c) =>
-        c.id === commentId ? { ...c, resolved: !c.resolved } : c
-      )
-    );
-  };
-
-  const handleAddReply = (
-    commentId: string,
-    replyText: string,
-    type: "comment" | "question"
-  ) => {
-    const newReply = {
-      id: `${commentId}-${Date.now()}`,
-      author: "Current User",
-      avatar: "/placeholder.svg?height=24&width=24",
-      initials: "CU",
-      content: replyText,
-      timestamp: "Just now",
-      type,
-    };
-
-    setComments(
-      comments.map((c) =>
-        c.id === commentId ? { ...c, replies: [...c.replies, newReply] } : c
-      )
-    );
-    setReplyingTo(null);
-    setReplyText("");
-  };
+  }, [])
 
   return (
-    <TooltipProvider>
-      <div className="flex flex-1 flex-col">
-        {/* Toolbar */}
-        <div className="flex items-center justify-between border-b px-4 py-2">
-          <div className="flex items-center gap-2">
-            {/* Formatting Tools */}
-            <div className="flex items-center gap-1">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <Bold className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Bold</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <Italic className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Italic</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <Underline className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Underline</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <Highlight className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Highlight</TooltipContent>
-              </Tooltip>
+    <div className="flex flex-col h-full bg-background">
+      {/* Toolbar */}
+      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="text-xs">
+                <Eye className="h-3 w-3 mr-1" />
+                Viewing
+              </Badge>
+              <span className="text-sm text-muted-foreground">
+                {wordCount} words • {readingTime} min read
+              </span>
             </div>
 
-            <Separator orientation="vertical" className="h-6" />
-
-            <div className="flex items-center gap-1">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Insert Link</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <List className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Bullet List</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <ListOrdered className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Numbered List</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <Quote className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Quote</TooltipContent>
-              </Tooltip>
-            </div>
-
-            <Separator orientation="vertical" className="h-6" />
-
-            <div className="flex items-center gap-1">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <BookOpen className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Research Hub</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <Image className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Insert Image</TooltipContent>
-              </Tooltip>
+            <div className="flex items-center gap-1 border-l pl-4">
+              <Button variant="ghost" size="sm" onClick={() => document.execCommand("bold")}>
+                <Bold className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => document.execCommand("italic")}>
+                <Italic className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => document.execCommand("underline")}>
+                <Underline className="h-4 w-4" />
+              </Button>
+              <div className="w-px h-6 bg-border mx-1" />
+              <Button variant="ghost" size="sm" onClick={() => document.execCommand("justifyLeft")}>
+                <AlignLeft className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => document.execCommand("justifyCenter")}>
+                <AlignCenter className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => document.execCommand("justifyRight")}>
+                <AlignRight className="h-4 w-4" />
+              </Button>
+              <div className="w-px h-6 bg-border mx-1" />
+              <Button variant="ghost" size="sm" onClick={() => document.execCommand("insertUnorderedList")}>
+                <List className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => document.execCommand("insertOrderedList")}>
+                <ListOrdered className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => document.execCommand("formatBlock", false, "blockquote")}
+              >
+                <Quote className="h-4 w-4" />
+              </Button>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Status and Collaborators */}
-            <Badge variant="secondary" className="gap-1">
-              <Clock className="h-3 w-3" />
-              Draft
-            </Badge>
-
-            <div className="flex items-center -space-x-2">
-              {collaborators.map((collaborator) => (
-                <Tooltip key={collaborator.id}>
-                  <TooltipTrigger asChild>
-                    <Avatar className="h-6 w-6 border-2 border-background">
-                      <AvatarImage
-                        src={collaborator.avatar || "/placeholder.svg"}
-                        alt={collaborator.name}
-                      />
-                      <AvatarFallback className="text-xs">
-                        {collaborator.initials}
-                      </AvatarFallback>
-                    </Avatar>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    {collaborator.name} ({collaborator.status})
-                  </TooltipContent>
-                </Tooltip>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
+              {teamMembers.slice(0, 4).map((member, index) => (
+                <Avatar
+                  key={member.id}
+                  className="h-6 w-6 border-2 border-white"
+                  style={{ marginLeft: index > 0 ? "-8px" : "0", zIndex: teamMembers.length - index }}
+                >
+                  <AvatarFallback className={`text-xs text-white ${member.color}`}>{member.initials}</AvatarFallback>
+                </Avatar>
               ))}
+              {teamMembers.length > 4 && (
+                <div className="h-6 w-6 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-[10px] text-gray-600 ml-[-8px]">
+                  +{teamMembers.length - 4}
+                </div>
+              )}
             </div>
 
-            <Separator orientation="vertical" className="h-6" />
-
-            {/* View Options */}
-            <Button
-              variant={showComments ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setShowComments(!showComments)}
-            >
-              <MessageSquare className="h-4 w-4" />
-              Comments ({comments.filter((c) => !c.resolved).length})
-            </Button>
-
-            <Button
-              variant={focusMode ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setFocusMode(!focusMode)}
-            >
-              <Eye className="h-4 w-4" />
-              Focus
-            </Button>
-
-            <Separator orientation="vertical" className="h-6" />
-
-            {/* Actions */}
             <Button variant="ghost" size="sm">
-              <Save className="h-4 w-4" />
-              Save
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Comments
             </Button>
 
             <Button size="sm">
-              <Share2 className="h-4 w-4" />
-              Share
+              <Save className="h-4 w-4 mr-2" />
+              Save
             </Button>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>Export as PDF</DropdownMenuItem>
-                <DropdownMenuItem>Version History</DropdownMenuItem>
-                <DropdownMenuItem>Document Settings</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
+      </div>
 
-        {/* Editor Area */}
-        <div className="flex flex-1 overflow-hidden relative">
-          {/* Main Editor */}
-          <div
-            className={`flex-1 flex flex-col ${
-              focusMode ? "mx-auto max-w-4xl" : ""
-            }`}
-          >
-            {/* Title */}
-            <div className="border-b px-6 py-4">
-              <Input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="text-2xl font-bold border-none px-0 shadow-none focus-visible:ring-0"
-                placeholder="Document title..."
-              />
-            </div>
+      {/* Document Content */}
+      <div className="flex-1 overflow-auto">
+        <div className="max-w-4xl mx-auto p-8">
+          {/* Title */}
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full text-3xl font-bold border-none outline-none bg-transparent mb-8 placeholder-gray-400"
+            placeholder="Document title..."
+          />
 
-            {/* Content Editor with Highlights */}
-            <div className="flex-1 p-6">
-              <div
-                className="min-h-full text-base leading-relaxed cursor-text"
-                onMouseUp={handleTextSelection}
-                style={{ whiteSpace: "pre-wrap" }}
-                onClick={(e) => {
-                  // Close comment bubble when clicking outside
-                  if (!(e.target as HTMLElement).closest("[data-comment-id]")) {
-                    handleCloseCommentBubble()
-                  }
-                }}
-              >
-                <HighlightedContent content={content} onHighlightClick={handleHighlightClick} />
-              </div>
-            </div>
+          {/* Content with Overlay */}
+          <div className="relative">
+            <div
+              ref={contentRef}
+              className="min-h-[500px] text-base leading-relaxed cursor-text focus:outline-none relative z-10 whitespace-pre-wrap"
+              contentEditable
+              suppressContentEditableWarning
+              onInput={handleContentChange}
+              onMouseUp={handleTextSelection}
+              onKeyDown={handleKeyDown}
+              onClick={(e) => {
+                // Close comment bubble when clicking outside highlighted areas
+                if (!(e.target as HTMLElement).closest("[data-comment-id]")) {
+                  setShowCommentBubble(false)
+                }
+              }}
+            />
+
+            {/* Highlight Overlay */}
+            <HighlightOverlay
+              highlights={commentHighlights}
+              contentRef={contentRef}
+              onHighlightClick={handleHighlightClick}
+            />
           </div>
-
-          {/* Comment Popup */}
-          {showCommentPopup && (
-            <CommentPopup
-              selectedText={selectedText}
-              position={popupPosition}
-              onAddComment={handleAddComment}
-              onCancel={() => {
-                setShowCommentPopup(false);
-                setSelectedText("");
-                setSelectionPosition(null);
-              }}
-            />
-          )}
-
-          {/* Comment Bubble */}
-          {showCommentBubble && activeCommentId && commentThreads[activeCommentId as keyof typeof commentThreads] && (
-            <CommentBubble
-              comment={commentThreads[activeCommentId as keyof typeof commentThreads]}
-              position={commentBubblePosition}
-              onClose={handleCloseCommentBubble}
-              onLike={(commentId, replyId) => {
-                console.log("Like comment:", commentId, replyId)
-                // Handle like functionality
-              }}
-              onResolve={(commentId) => {
-                console.log("Resolve comment:", commentId)
-                // Handle resolve functionality
-              }}
-            />
-          )}
-
-          {/* Comments Panel */}
-          {/* {showComments && !focusMode && (
-            <div className="w-80 border-l bg-muted/30">
-              <div className="p-4 border-b">
-                <h3 className="font-semibold flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4" />
-                  Comments & Feedback
-                </h3>
-              </div>
-
-              <div className="p-4 space-y-4 max-h-full overflow-y-auto">
-                {comments.map((comment) => (
-                  <div key={comment.id} className="space-y-2">
-                    <div className="flex items-start gap-2">
-                      <Avatar className="h-6 w-6">
-                        <AvatarImage
-                          src={comment.avatar || "/placeholder.svg"}
-                          alt={comment.author}
-                        />
-                        <AvatarFallback className="text-xs">
-                          {comment.initials}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">
-                            {comment.author}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {comment.timestamp}
-                          </span>
-                          {comment.resolved ? (
-                            <CheckCircle2 className="h-3 w-3 text-green-500" />
-                          ) : (
-                            <AlertCircle className="h-3 w-3 text-orange-500" />
-                          )}
-                        </div>
-
-                        <div className="text-xs p-2 bg-yellow-50 border border-yellow-200 rounded">
-                          {comment.selectedText}
-                        </div>
-
-                        <p className="text-sm text-muted-foreground">
-                          {comment.content}
-                        </p>
-
-                        {comment.replies.length > 0 && (
-                          <div className="ml-4 space-y-2 border-l-2 border-gray-200 pl-3">
-                            {comment.replies.map((reply) => (
-                              <div
-                                key={reply.id}
-                                className="flex items-start gap-2"
-                              >
-                                <Avatar className="h-5 w-5">
-                                  <AvatarImage
-                                    src={reply.avatar || "/placeholder.svg"}
-                                    alt={reply.author}
-                                  />
-                                  <AvatarFallback className="text-xs">
-                                    {reply.initials}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xs font-medium">
-                                      {reply.author}
-                                    </span>
-                                    <span className="text-xs text-muted-foreground">
-                                      {reply.timestamp}
-                                    </span>
-                                    {reply.type === "question" && (
-                                      <HelpCircle className="h-3 w-3 text-blue-500" />
-                                    )}
-                                  </div>
-                                  <p className="text-xs text-muted-foreground">
-                                    {reply.content}
-                                  </p>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        {replyingTo === comment.id ? (
-                          <div className="space-y-2">
-                            <Textarea
-                              placeholder="Add a reply..."
-                              value={replyText}
-                              onChange={(e) => setReplyText(e.target.value)}
-                              className="min-h-[60px] text-sm"
-                            />
-                            <div className="flex items-center gap-2">
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => {
-                                  setReplyingTo(null);
-                                  setReplyText("");
-                                }}
-                              >
-                                Cancel
-                              </Button>
-                              <Button
-                                size="sm"
-                                onClick={() =>
-                                  handleAddReply(
-                                    comment.id,
-                                    replyText,
-                                    "comment"
-                                  )
-                                }
-                                disabled={!replyText.trim()}
-                              >
-                                Reply
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() =>
-                                  handleAddReply(
-                                    comment.id,
-                                    replyText,
-                                    "question"
-                                  )
-                                }
-                                disabled={!replyText.trim()}
-                              >
-                                <HelpCircle className="h-3 w-3 mr-1" />
-                                Ask Question
-                              </Button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-6 px-2 text-xs"
-                              onClick={() => setReplyingTo(comment.id)}
-                            >
-                              Reply
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-6 px-2 text-xs"
-                              onClick={() => handleResolveComment(comment.id)}
-                            >
-                              {comment.resolved ? "Unresolve" : "Resolve"}
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                <div className="pt-4 border-t">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Lightbulb className="h-4 w-4" />
-                    <span>AI Writing Assistant</span>
-                  </div>
-                  <div className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <p className="text-sm text-blue-800">
-                      Consider adding specific metrics to strengthen your
-                      problem statement. Research shows quantified problems are
-                      40% more compelling.
-                    </p>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="mt-2 h-6 px-2 text-xs text-blue-700"
-                    >
-                      Apply Suggestion
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )} */}
         </div>
+      </div>
 
-        {/* Status Bar */}
-        <div className="flex items-center justify-between border-t px-4 py-2 text-sm text-muted-foreground">
+      {/* Status Bar */}
+      <div className="border-t bg-muted/50 px-4 py-2">
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-4">
-            <span>1,247 words</span>
-            <span>6 min read</span>
-            <span>Last saved 2 minutes ago</span>
+            <span>Last saved: 2 minutes ago</span>
+            <span>•</span>
+            <span>{wordCount} words</span>
+            <span>•</span>
+            <span>{readingTime} min read</span>
           </div>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-xs">
-              Readability: Good
-            </Badge>
-            <Badge variant="outline" className="text-xs">
-              SEO: 85%
-            </Badge>
+            <Users className="h-3 w-3" />
+            <span>{teamMembers.length} collaborators</span>
           </div>
         </div>
-
-        {/* Floating Toolbar */}
         <FloatingToolbar />
       </div>
-    </TooltipProvider>
-  );
+
+      {/* Comment Popup */}
+      {showCommentPopup && (
+        <CommentPopup
+          selectedText={selectedText}
+          position={selectionPosition}
+          onAddComment={handleAddComment}
+          onCancel={() => {
+            setShowCommentPopup(false)
+            setSelectedText("")
+          }}
+        />
+      )}
+
+      {/* Comment Bubble */}
+      {showCommentBubble && (
+        <CommentBubble
+          comment={mockComment}
+          position={commentBubblePosition}
+          onClose={() => setShowCommentBubble(false)}
+          onLike={(commentId, replyId) => console.log("Like:", commentId, replyId)}
+          onResolve={(commentId) => console.log("Resolve:", commentId)}
+        />
+      )}
+    </div>
+  )
 }
