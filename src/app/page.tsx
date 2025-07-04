@@ -19,6 +19,7 @@ import { Separator } from "@radix-ui/react-separator";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { UserContext, UserProvider } from "@/context/UserContext";
+import Editor from "@/components/organisms/Editor/Editor";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -101,7 +102,8 @@ export default async function Home() {
                   </Breadcrumb>
                 </header>
                 <div className="flex-1 flex flex-col justify-between overflow-hidden">
-                  <ContentEditor />
+                  {/* <ContentEditor /> */}
+                  <Editor />
                 </div>
               </div>
             </ResizablePanel>
