@@ -69,14 +69,28 @@ export const PlaceholderElement = withHOC(
     const { openFilePicker } = useFilePicker({
       accept: currentContent.accept,
       multiple: true,
-      onFilesSelected: ({ plainFiles: updatedFiles }) => {
+      onFilesSelected: (data: any) => {
+        // Check if files were successfully selected
+        if (!data.plainFiles || data.plainFiles.length === 0) {
+          console.log('No files selected');
+          return;
+        }
+
+        const updatedFiles: File[] = data.plainFiles;
         const firstFile = updatedFiles[0];
         const restFiles = updatedFiles.slice(1);
+
+        const createFileList = (files: File[]): FileList => {
+          const dt = new DataTransfer();
+          files.forEach(file => dt.items.add(file));
+          return dt.files;
+        };
 
         replaceCurrentPlaceholder(firstFile);
 
         if (restFiles.length > 0) {
-          editor.getTransforms(PlaceholderPlugin).insert.media(restFiles);
+          const fileList = createFileList(restFiles);
+          editor.getTransforms(PlaceholderPlugin).insert.media(fileList);
         }
       },
     });

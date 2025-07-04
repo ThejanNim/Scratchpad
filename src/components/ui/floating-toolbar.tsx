@@ -19,7 +19,13 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip
 import { Button } from "./button";
 import { Separator } from "./separator";
 
-export function FloatingToolbar() {
+interface FloatingToolbarProps {
+  children?: React.ReactNode;
+  className?: string;
+  // Add other props as needed
+}
+
+export function FloatingToolbar({ children, className, ...props }: FloatingToolbarProps) {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const [selectedTool, setSelectedTool] = React.useState("selector");
 
