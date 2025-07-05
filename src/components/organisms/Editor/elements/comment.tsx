@@ -45,7 +45,7 @@ import {
 } from '@/components/organisms/Editor/plugins/discussion-kit';
 
 import { Editor, EditorContainer } from './editor';
-import { BasicMarksKit } from '../plugins/BasicMarksKit';
+import { BasicMarksKit } from '../plugins/basic-marks-kit';
 
 export interface TComment {
   id: string;
