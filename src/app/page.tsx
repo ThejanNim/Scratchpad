@@ -8,7 +8,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { CommentsPanel } from "@/components/ui/comments-panel";
-import { ContentEditor } from "@/components/ui/content-editor";
 import {
   ResizableHandle,
   ResizablePanel,

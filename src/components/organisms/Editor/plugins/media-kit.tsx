@@ -11,14 +11,14 @@ import {
 } from '@platejs/media/react';
 import { KEYS } from 'platejs';
 
-import { AudioElement } from '@/components/ui/media-audio-node';
-import { MediaEmbedElement } from '@/components/ui/media-embed-node';
-import { FileElement } from '@/components/ui/media-file-node';
-import { ImageElement } from '@/components/ui/media-image-node';
-import { PlaceholderElement } from '@/components/ui/media-placeholder-node';
-import { MediaPreviewDialog } from '@/components/ui/media-preview-dialog';
-import { MediaUploadToast } from '@/components/ui/media-upload-toast';
-import { VideoElement } from '@/components/ui/media-video-node';
+import { AudioElement } from '@/components/organisms/Editor/elements/media-audio-node';
+import { MediaEmbedElement } from '@/components/organisms/Editor/elements/media-embed-node';
+import { FileElement } from '@/components/organisms/Editor/elements/media-file-node';
+import { ImageElement } from '@/components/organisms/Editor/elements/media-image-node';
+import { PlaceholderElement } from '@/components/organisms/Editor/elements/media-placeholder-node';
+import { MediaPreviewDialog } from '@/components/organisms/Editor/elements/media-preview-dialog';
+import { MediaUploadToast } from '@/components/organisms/Editor/elements/media-upload-toast';
+import { VideoElement } from '@/components/organisms/Editor/elements/media-video-node';
 
 export const MediaKit = [
   ImagePlugin.configure({

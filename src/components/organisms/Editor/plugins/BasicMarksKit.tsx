@@ -12,8 +12,8 @@ import {
   UnderlinePlugin,
 } from '@platejs/basic-nodes/react';
 
-import { CodeLeaf } from '@/components/ui/CodeNode';
-import { HighlightLeaf } from '@/components/ui/HighlightNode';
+import { CodeLeaf } from '@/components/organisms/Editor/elements/CodeNode';
+import { HighlightLeaf } from '@/components/organisms/Editor/elements/HighlightNode';
 import { KbdLeaf } from '@/components/ui/KbdNode';
 
 export const BasicMarksKit = [

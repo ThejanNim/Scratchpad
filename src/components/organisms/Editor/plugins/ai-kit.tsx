@@ -8,8 +8,8 @@ import { AIChatPlugin, AIPlugin, useChatChunk } from '@platejs/ai/react';
 import { KEYS, PathApi } from 'platejs';
 import { usePluginOption } from 'platejs/react';
 
-import { AILoadingBar, AIMenu } from '@/components/ui/ai-menu';
-import { AIAnchorElement, AILeaf } from '@/components/ui/ai-node';
+import { AILoadingBar, AIMenu } from '@/components/organisms/Editor/elements/ai-menu';
+import { AIAnchorElement, AILeaf } from '@/components/organisms/Editor/elements/ai-node';
 
 import { CursorOverlayKit } from './cursor-overlay-kit';
 import { MarkdownKit } from './markdown-kit';

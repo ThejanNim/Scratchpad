@@ -10,7 +10,7 @@ import { EditorKit } from "./EditorKit";
 import {
   EditorContainer,
   Editor as EditorComponent,
-} from "@/components/ui/editor";
+} from "@/components/organisms/Editor/elements/editor";
 
 export default function Editor() {
   const editor = usePlateEditor({

@@ -9,10 +9,10 @@ import {
 } from '@platejs/basic-nodes/react';
 import { ParagraphPlugin } from 'platejs/react';
 
-import { BlockquoteElement } from '@/components/ui/blockquote-node';
+import { BlockquoteElement } from '@/components/organisms/Editor/elements/blockquote-node';
 import { H1Element, H2Element, H3Element } from '@/components/ui/heading-node';
-import { HrElement } from '@/components/ui/hr-node';
-import { ParagraphElement } from '@/components/ui/paragraph-node';
+import { HrElement } from '@/components/organisms/Editor/elements/hr-node';
+import { ParagraphElement } from '@/components/organisms/Editor/elements/paragraph-node';
 
 export const BasicBlocksKit = [
   ParagraphPlugin.withComponent(ParagraphElement),

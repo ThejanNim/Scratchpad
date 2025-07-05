@@ -1,8 +1,7 @@
 'use client';
 
 import { CalloutPlugin } from '@platejs/callout/react';
-
-import { CalloutElement } from '@/components/ui/callout-node';
+import { CalloutElement } from '../elements/callout-node';
 
 export const CalloutKit = [
   CalloutPlugin.configure({
