@@ -20,6 +20,8 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { UserContext, UserProvider } from "@/context/UserContext";
 import Editor from "@/components/organisms/Editor/Editor";
+import { Toaster } from "sonner";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -66,7 +68,6 @@ export default async function Home() {
   };
 
   return (
-    // <UserContext.Provider value={{ user }}>
     <UserProvider user={user}>
       <SidebarProvider>
         <div className="flex h-screen w-full">
@@ -102,15 +103,14 @@ export default async function Home() {
                   </Breadcrumb>
                 </header>
                 <div className="flex-1 flex flex-col justify-between overflow-hidden">
-                  {/* <ContentEditor /> */}
                   <Editor />
+                  <Toaster />
                 </div>
               </div>
             </ResizablePanel>
 
             <ResizableHandle withHandle />
 
-            {/* Comments Panel */}
             <ResizablePanel defaultSize={18} minSize={20} maxSize={40}>
               <CommentsPanel />
             </ResizablePanel>
@@ -118,6 +118,5 @@ export default async function Home() {
         </div>
       </SidebarProvider>
     </UserProvider>
-    // </UserContext.Provider>
   );
 }

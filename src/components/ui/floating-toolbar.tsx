@@ -1,117 +1,87 @@
-import React from "react";
+'use client';
+
+import * as React from 'react';
+
 import {
-  MousePointer2,
-  StickyNote,
-  Circle,
-  Type,
-  Minus,
-  Smile,
-  PenTool,
-  Puzzle,
-  ChevronUp,
-  Triangle,
-  ArrowRight,
-  Heart,
-  Star,
-  Zap,
-} from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip";
-import { Button } from "./button";
-import { Separator } from "./separator";
+  type FloatingToolbarState,
+  flip,
+  offset,
+  useFloatingToolbar,
+  useFloatingToolbarState,
+} from '@platejs/floating';
+import { useComposedRef } from '@udecode/cn';
+import { KEYS } from 'platejs';
+import {
+  useEditorId,
+  useEventEditorValue,
+  usePluginOption,
+} from 'platejs/react';
 
-interface FloatingToolbarProps {
-  children?: React.ReactNode;
-  className?: string;
-  // Add other props as needed
-}
+import { cn } from '@/lib/utils';
 
-export function FloatingToolbar({ children, className, ...props }: FloatingToolbarProps) {
-  const [isExpanded, setIsExpanded] = React.useState(false);
-  const [selectedTool, setSelectedTool] = React.useState("selector");
+import { Toolbar } from './toolbar';
 
-  const mainTools = [
-    { id: "selector", icon: MousePointer2, label: "Selector" },
-    { id: "sticky", icon: StickyNote, label: "Sticky Notes" },
-    { id: "shapes", icon: Circle, label: "Shapes" },
-    { id: "text", icon: Type, label: "Text" },
-    { id: "connectors", icon: Minus, label: "Connectors" },
-    { id: "stamps", icon: Smile, label: "Stamps/Emojis" },
-    { id: "drawing", icon: PenTool, label: "Drawing" },
-    { id: "widgets", icon: Puzzle, label: "Widgets" },
-  ];
+export function FloatingToolbar({
+  children,
+  className,
+  state,
+  ...props
+}: React.ComponentProps<typeof Toolbar> & {
+  state?: FloatingToolbarState;
+}) {
+  const editorId = useEditorId();
+  const focusedEditorId = useEventEditorValue('focus');
+  const isFloatingLinkOpen = !!usePluginOption({ key: KEYS.link }, 'mode');
+  const isAIChatOpen = usePluginOption({ key: KEYS.aiChat }, 'open');
 
-  const expandedTools = [
-    { id: "triangle", icon: Triangle, label: "Triangle" },
-    { id: "arrow", icon: ArrowRight, label: "Arrow" },
-    { id: "heart", icon: Heart, label: "Heart" },
-    { id: "star", icon: Star, label: "Star" },
-    { id: "lightning", icon: Zap, label: "Lightning" },
-  ];
+  const floatingToolbarState = useFloatingToolbarState({
+    editorId,
+    focusedEditorId,
+    hideToolbar: isFloatingLinkOpen || isAIChatOpen,
+    ...state,
+    floatingOptions: {
+      middleware: [
+        offset(12),
+        flip({
+          fallbackPlacements: [
+            'top-start',
+            'top-end',
+            'bottom-start',
+            'bottom-end',
+          ],
+          padding: 12,
+        }),
+      ],
+      placement: 'top',
+      ...state?.floatingOptions,
+    },
+  });
+
+  const {
+    clickOutsideRef,
+    hidden,
+    props: rootProps,
+    ref: floatingRef,
+  } = useFloatingToolbar(floatingToolbarState);
+
+  const ref = useComposedRef<HTMLDivElement>(props.ref, floatingRef);
+
+  if (hidden) return null;
 
   return (
-    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-lg p-2">
-        {/* Expanded Tools */}
-        {isExpanded && (
-          <div className="flex items-center gap-1 mb-2 pb-2 border-b">
-            {expandedTools.map((tool) => (
-              <Tooltip key={tool.id}>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={selectedTool === tool.id ? "default" : "ghost"}
-                    size="sm"
-                    className="h-10 w-10 p-0"
-                    onClick={() => setSelectedTool(tool.id)}
-                  >
-                    <tool.icon className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top">{tool.label}</TooltipContent>
-              </Tooltip>
-            ))}
-          </div>
+    <div ref={clickOutsideRef}>
+      <Toolbar
+        {...props}
+        {...rootProps}
+        ref={ref}
+        className={cn(
+          'absolute z-50 scrollbar-hide overflow-x-auto rounded-md border bg-popover p-1 whitespace-nowrap opacity-100 shadow-md print:hidden',
+          'max-w-[80vw]',
+          className
         )}
-
-        {/* Main Tools */}
-        <div className="flex items-center gap-1">
-          {mainTools.map((tool) => (
-            <Tooltip key={tool.id}>
-              <TooltipTrigger asChild>
-                <Button
-                  variant={selectedTool === tool.id ? "default" : "ghost"}
-                  size="sm"
-                  className="h-10 w-10 p-0"
-                  onClick={() => setSelectedTool(tool.id)}
-                >
-                  <tool.icon className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top">{tool.label}</TooltipContent>
-            </Tooltip>
-          ))}
-
-          <Separator orientation="vertical" className="h-6 mx-1" />
-
-          {/* More Tools Toggle */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-10 w-10 p-0"
-                onClick={() => setIsExpanded(!isExpanded)}
-              >
-                <ChevronUp
-                  className={`h-4 w-4 transition-transform ${
-                    isExpanded ? "rotate-180" : ""
-                  }`}
-                />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">More Tools</TooltipContent>
-          </Tooltip>
-        </div>
-      </div>
+      >
+        {children}
+      </Toolbar>
     </div>
   );
 }
