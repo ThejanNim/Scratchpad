@@ -21,7 +21,7 @@ export default function Editor() {
   return (
     <Plate editor={editor}>
       <EditorContainer>
-        <EditorComponent variant="demo" />
+        <EditorComponent variant="default" />
       </EditorContainer>
     </Plate>
   );

@@ -10,7 +10,7 @@ import {
 import { ParagraphPlugin } from 'platejs/react';
 
 import { BlockquoteElement } from '@/components/organisms/Editor/elements/blockquote-node';
-import { H1Element, H2Element, H3Element } from '@/components/ui/heading-node';
+import { H1Element, H2Element, H3Element } from '@/components/organisms/Editor/elements/heading-node';
 import { HrElement } from '@/components/organisms/Editor/elements/hr-node';
 import { ParagraphElement } from '@/components/organisms/Editor/elements/paragraph-node';
 

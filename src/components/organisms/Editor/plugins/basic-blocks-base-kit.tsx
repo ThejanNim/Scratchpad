@@ -12,7 +12,7 @@ import {
   H1ElementStatic,
   H2ElementStatic,
   H3ElementStatic,
-} from '@/components/ui/heading-node-static';
+} from '@/components/organisms/Editor/elements/heading-node-static';
 import { HrElementStatic } from '@/components/organisms/Editor/elements/hr-node-static';
 import { ParagraphElementStatic } from '@/components/organisms/Editor/elements/paragraph-node-static';
 

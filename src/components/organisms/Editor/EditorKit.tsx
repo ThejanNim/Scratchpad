@@ -6,8 +6,8 @@ import { type TPlateEditor, useEditorRef } from 'platejs/react';
 import { AIKit } from './plugins/AIKit';
 import { AlignKit } from './plugins/AlignKit';
 import { AutoformatKit } from './plugins/AutoformatKit';
-import { BasicBlocksKit } from './plugins/BasicBlocksKit';
-import { BasicMarksKit } from './plugins/BasicMarksKit';
+import { BasicBlocksKit } from './plugins/basic-blocks-kit';
+import { BasicMarksKit } from './plugins/basic-marks-kit';
 import { BlockMenuKit } from './plugins/block-menu-kit';
 import { BlockPlaceholderKit } from './plugins/block-placeholder-kit';
 import { CalloutKit } from './plugins/callout-kit';
@@ -84,7 +84,7 @@ export const EditorKit = [
 
   // UI
   ...BlockPlaceholderKit,
-  ...FixedToolbarKit,
+  // ...FixedToolbarKit,
   ...FloatingToolbarKit,
 ];
 
