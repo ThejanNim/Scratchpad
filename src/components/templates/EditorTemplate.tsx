@@ -21,31 +21,29 @@ export default function EditorTemplate({
   handleSignOut,
 }: EditorLayoutClientProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  
+
   useEffect(() => {
     console.log("Sidebar open state:", isSidebarOpen);
   }, [isSidebarOpen]);
 
   return (
     <UserProvider user={user}>
-      <SidebarProvider defaultOpen={true} open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+      <SidebarProvider
+        defaultOpen={true}
+        open={isSidebarOpen}
+        onOpenChange={setIsSidebarOpen}
+      >
         <div className="flex h-screen w-full">
-          {/* <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel defaultSize={12} minSize={8} maxSize={35}> */}
-              <div className="h-full flex flex-col">
-                <AppSidebar
-                  collections={collectionsData}
-                  documents={documentsData}
-                  user={user}
-                  handleSignOut={handleSignOut}
-                  collapsible="offcanvas"
-                />
-              </div>
-            {/* </ResizablePanel> */}
-
-            {/* <ResizableHandle withHandle /> */}
-            {children}
-          {/* </ResizablePanelGroup> */}
+          <div className="h-full flex flex-col">
+            <AppSidebar
+              collections={collectionsData}
+              documents={documentsData}
+              user={user}
+              handleSignOut={handleSignOut}
+              collapsible="offcanvas"
+            />
+          </div>
+          {children}
         </div>
       </SidebarProvider>
     </UserProvider>

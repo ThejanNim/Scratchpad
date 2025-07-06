@@ -56,7 +56,7 @@ export default async function Document({
       </div>
 
       <CommentsPanel />
-      
+
       {/* </ResizablePanel> */}
 
       {/* <ResizableHandle withHandle /> */}
