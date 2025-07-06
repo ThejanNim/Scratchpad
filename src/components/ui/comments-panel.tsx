@@ -71,7 +71,7 @@ const mockComments: Comment[] = [
     id: "1",
     author: {
       name: "Sarah Chen",
-      avatar: "/placeholder.svg?height=32&width=32",
+      avatar: "",
       initials: "SC",
       role: "Product Designer",
       color: "bg-blue-500",
@@ -90,7 +90,7 @@ const mockComments: Comment[] = [
         id: "1-1",
         author: {
           name: "Mike Johnson",
-          avatar: "/placeholder.svg?height=32&width=32",
+          avatar: "",
           initials: "MJ",
           role: "UX Researcher",
           color: "bg-green-500",
@@ -106,7 +106,7 @@ const mockComments: Comment[] = [
     id: "2",
     author: {
       name: "Emma Davis",
-      avatar: "/placeholder.svg?height=32&width=32",
+      avatar: "",
       initials: "ED",
       role: "Content Strategist",
       color: "bg-purple-500",
@@ -125,7 +125,7 @@ const mockComments: Comment[] = [
         id: "2-1",
         author: {
           name: "Alex Kim",
-          avatar: "/placeholder.svg?height=32&width=32",
+          avatar: "",
           initials: "AK",
           role: "Data Analyst",
           color: "bg-orange-500",
@@ -141,7 +141,7 @@ const mockComments: Comment[] = [
     id: "3",
     author: {
       name: "David Wilson",
-      avatar: "/placeholder.svg?height=32&width=32",
+      avatar: "",
       initials: "DW",
       role: "Product Manager",
       color: "bg-red-500",
@@ -223,7 +223,7 @@ export function CommentsPanel() {
       id: `${commentId}-${Date.now()}`,
       author: {
         name: "You",
-        avatar: "/placeholder.svg?height=32&width=32",
+        avatar: "",
         initials: "YU",
         role: "Team Member",
         color: "bg-gray-500",
@@ -342,7 +342,7 @@ export function CommentsPanel() {
                       <div className="flex items-center gap-2">
                         <div className="relative">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={comment.author.avatar || "/placeholder.svg"} alt={comment.author.name} />
+                            <AvatarImage src={comment.author.avatar || ""} alt={comment.author.name} />
                             <AvatarFallback className={`text-xs text-white ${comment.author.color}`}>
                               {comment.author.initials}
                             </AvatarFallback>
@@ -445,7 +445,7 @@ export function CommentsPanel() {
                               <div className="relative">
                                 <Avatar className="h-6 w-6">
                                   <AvatarImage
-                                    src={reply.author.avatar || "/placeholder.svg"}
+                                    src={reply.author.avatar || ""}
                                     alt={reply.author.name}
                                   />
                                   <AvatarFallback className={`text-xs text-white ${reply.author.color}`}>

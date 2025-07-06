@@ -10,9 +10,7 @@ import {
   SidebarGroupLabel,
   SidebarMenu,
 } from "@/components/ui/sidebar";
-import {
-  Plus,
-} from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   ICollection,
   IDocumentItem,
@@ -129,6 +127,12 @@ export default function Collections({
         .insert({
           title: documentTitle.trim(),
           collection_id: collectionId,
+          content: [
+            {
+              type: "h1",
+              children: [{ text: documentTitle.trim() }],
+            },
+          ],
         })
         .select()
         .single();
@@ -146,7 +150,7 @@ export default function Collections({
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const handleCollectionAction = async (
     collectionId: string,

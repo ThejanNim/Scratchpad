@@ -41,6 +41,7 @@ import {
   InlineComboboxInput,
   InlineComboboxItem,
 } from "./inline-combobox";
+import { AIChatPlugin } from "@platejs/ai/react";
 
 type Group = {
   group: string;
@@ -56,19 +57,19 @@ type Group = {
 };
 
 const groups: Group[] = [
-  //   {
-  //     group: 'AI',
-  //     items: [
-  //       {
-  //         focusEditor: false,
-  //         icon: <SparklesIcon />,
-  //         value: 'AI',
-  //         onSelect: (editor) => {
-  //           editor.getApi(AIChatPlugin).aiChat.show();
-  //         },
-  //       },
-  //     ],
-  //   },
+    {
+      group: 'AI',
+      items: [
+        {
+          focusEditor: false,
+          icon: <SparklesIcon />,
+          value: 'AI',
+          onSelect: (editor) => {
+            editor.getApi(AIChatPlugin).aiChat.show();
+          },
+        },
+      ],
+    },
   {
     group: "Basic blocks",
     items: [
@@ -206,15 +207,16 @@ const groups: Group[] = [
     items: [
       {
         focusEditor: true,
-        icon: <Type />, // Use any relevant icon
-        keywords: ["red", "color"],
+        icon: <Type />,
         label: "Red Text",
-        value: "redText",
-        onSelect: (editor) => {
-          insertInlineElement(editor, "redText");
-        },
+        value: "red_text",
+      }
+    ].map((item) => ({
+      ...item,
+      onSelect: (editor, value) => {
+        insertInlineElement(editor, value);
       },
-    ],
+    })),
   },
 ];
 

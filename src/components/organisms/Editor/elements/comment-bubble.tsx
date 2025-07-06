@@ -93,7 +93,7 @@ export function CommentBubble({ comment, position, onClose, onLike, onResolve }:
             <div className="flex items-center gap-2">
               <div className="relative">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={comment.author.avatar || "/placeholder.svg"} alt={comment.author.name} />
+                  <AvatarImage src={comment.author.avatar || ""} alt={comment.author.name} />
                   <AvatarFallback className={`text-xs text-white ${comment.author.color}`}>
                     {comment.author.initials}
                   </AvatarFallback>
@@ -180,7 +180,7 @@ export function CommentBubble({ comment, position, onClose, onLike, onResolve }:
                     <div className="flex items-start gap-2">
                       <div className="relative">
                         <Avatar className="h-6 w-6">
-                          <AvatarImage src={reply.author.avatar || "/placeholder.svg"} alt={reply.author.name} />
+                          <AvatarImage src={reply.author.avatar || ""} alt={reply.author.name} />
                           <AvatarFallback className={`text-xs text-white ${reply.author.color}`}>
                             {reply.author.initials}
                           </AvatarFallback>
