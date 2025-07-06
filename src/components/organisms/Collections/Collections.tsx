@@ -14,7 +14,7 @@ import { Plus } from "lucide-react";
 import {
   ICollection,
   IDocumentItem,
-} from "@/components/organisms/Sidebar/Sidebar";
+} from "@/components/organisms/AppSidebar/Sidebar";
 import CollectionTree from "@/components/molecules/CollectionTree/CollectionTree";
 import { useUser } from "@/context/UserContext";
 

@@ -1,7 +1,7 @@
 import {
   ICollection,
   IDocumentItem,
-} from "@/components/organisms/Sidebar/Sidebar";
+} from "@/components/organisms/AppSidebar/Sidebar";
 import DocumentItem, { DocumentItemProps } from "../DocumentItem/DocumentItem";
 import {
   Collapsible,

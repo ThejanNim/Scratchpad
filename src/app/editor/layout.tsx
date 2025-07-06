@@ -1,13 +1,6 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { UserProvider } from "@/context/UserContext";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
-import AppSidebar from "@/components/organisms/Sidebar/Sidebar";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import EditorTemplate from "@/components/templates/EditorTemplate";
 
 export default async function EditorLayout({
   children,
@@ -58,26 +51,13 @@ export default async function EditorLayout({
   };
 
   return (
-    <UserProvider user={user}>
-      <SidebarProvider>
-        <div className="flex h-screen w-full">
-          <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel defaultSize={12} minSize={8} maxSize={35}>
-              <div className="h-full flex flex-col">
-                <AppSidebar
-                  collections={collectionsData}
-                  documents={documentsData}
-                  user={user}
-                  handleSignOut={handleSignOut}
-                />
-              </div>
-            </ResizablePanel>
-
-            <ResizableHandle withHandle />
-            {children}
-          </ResizablePanelGroup>
-        </div>
-      </SidebarProvider>
-    </UserProvider>
+    <EditorTemplate
+      user={user}
+      collectionsData={collectionsData || []}
+      documentsData={documentsData || []}
+      handleSignOut={handleSignOut}
+    >
+      {children}
+    </EditorTemplate>
   );
 }
