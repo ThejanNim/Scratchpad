@@ -56,7 +56,6 @@ export function CommentBubble({ comment, position, onClose, onLike, onResolve }:
   const handleAddReply = () => {
     if (!replyText.trim()) return
     // This would typically add the reply to your state/database
-    console.log("Adding reply:", replyText)
     setReplyText("")
     setShowReplyInput(false)
   }

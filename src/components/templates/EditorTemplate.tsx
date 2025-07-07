@@ -22,10 +22,6 @@ export default function EditorTemplate({
 }: EditorLayoutClientProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  useEffect(() => {
-    console.log("Sidebar open state:", isSidebarOpen);
-  }, [isSidebarOpen]);
-
   return (
     <UserProvider user={user}>
       <SidebarProvider

@@ -38,41 +38,58 @@ interface Comment {
   }>;
 }
 
-export function CommentsPanel() {
+interface CommentsPanelProps {
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function CommentsPanel({ 
+  isOpen = true, 
+  onOpenChange 
+}: CommentsPanelProps) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+
+  React.useEffect(() => {
+    setIsSidebarOpen(isOpen);
+  }, [isOpen]);
+
+  const handleOpenChange = (open: boolean) => {
+    setIsSidebarOpen(open);
+    onOpenChange?.(open);
+  };
 
   return (
     <SidebarProvider
       defaultOpen={true}
       open={isSidebarOpen}
-      onOpenChange={setIsSidebarOpen}
+      onOpenChange={handleOpenChange}
       className="w-fit"
-      style={{
-        "--sidebar-width": "28rem",
-      } as React.CSSProperties}
+      style={
+        {
+          "--sidebar-width": "28rem",
+        } as React.CSSProperties
+      }
     >
       <SidebarTrigger />
-      <Sidebar collapsible="offcanvas" side="right">
+      <Sidebar collapsible="offcanvas" side="right" className="p-4">
         <h2>Outline</h2>
         <div className="min-h-8">
           <TipTap />
         </div>
         <h2>Resources</h2>
-        <div className="flex gap-2 ml-4 mt-4">
+        <div className="flex gap-2 mt-4">
           <ResourceItem />
 
           <ResourceItem />
         </div>
 
-        <div className="flex gap-2 ml-4 mt-4">
+        <div className="flex gap-2 mt-4">
           <ResourceItem />
 
           <ResourceItem />
         </div>
 
-        <div className="flex gap-2 ml-4 mt-4">
-          <ResourceItem />
-
+        <div className="flex gap-2 mt-4">
           <ResourceItem />
         </div>
       </Sidebar>

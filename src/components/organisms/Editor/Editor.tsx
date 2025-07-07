@@ -46,9 +46,6 @@ export default function Editor({ value, documentId }: EditorProps) {
 
   const handleChange = useCallback((newValue: any) => {
     const content = newValue.children || newValue;
-    
-    // Log the content
-    console.log(`Editor JSON for document ${documentId}:`, JSON.stringify(content.value, null, 2));
 
     // Clear previous timeout
     if (saveTimeoutRef.current) {

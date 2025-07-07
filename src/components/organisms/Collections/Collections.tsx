@@ -236,7 +236,7 @@ export default function Collections({
     documentId: string,
     action: "delete" | "rename" | "duplicate"
   ) => {
-    console.log("Document action:", action, documentId);
+    
   };
 
   return (
