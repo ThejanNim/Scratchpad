@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, File, Edit, Copy, Trash2 } from "lucide-react";
-import { IDocumentItem } from "@/components/organisms/AppSidebar/Sidebar";
+import { IDocumentItem } from "@/components/organisms/AppSidebar/AppSidebar";
 import Link from 'next/link'
 
 export interface DocumentItemProps {
