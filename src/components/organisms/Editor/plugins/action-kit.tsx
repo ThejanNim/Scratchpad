@@ -160,7 +160,7 @@ const ActionElement = ({ element, editor, ...props }: ActionElementProps) => {
                 className="flex min-w-0 flex-grow items-center justify-between"
                 onClick={() => {}}
               >
-                <div className="mr-2 flex-1 truncate">
+                <div className="mr-2 flex-1">
                   <span
                     className={`${
                       isCompleted ? "text-muted-foreground line-through" : ""
