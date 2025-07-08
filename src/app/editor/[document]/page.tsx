@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import DocumentTemplate from "@/components/templates/DocumentTemplate";
-import Plan from "@/components/ui/agent-plan";
 
 export default async function Document({
   params,

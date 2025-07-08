@@ -1,4 +1,4 @@
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion, Variants } from "framer-motion";
 import { CheckCircle2, CircleDotDashed, Circle } from "lucide-react";
 import { createPlatePlugin } from "platejs/react";
 import { type PlateElementProps, PlateElement } from "platejs/react";
@@ -77,7 +77,7 @@ const ActionElement = ({ element, editor, ...props }: ActionElementProps) => {
   };
 
   // Animation variants with reduced motion support
-  const taskVariants = {
+  const taskVariants: Variants = {
     hidden: {
       opacity: 0,
       y: prefersReducedMotion ? 0 : -5,
@@ -96,7 +96,7 @@ const ActionElement = ({ element, editor, ...props }: ActionElementProps) => {
       opacity: 0,
       y: prefersReducedMotion ? 0 : -5,
       transition: { duration: 0.15 },
-    },
+    }
   };
 
   const isCompleted = statusProps.status === "completed";
