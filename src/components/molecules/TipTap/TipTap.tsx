@@ -7,6 +7,7 @@ import { EditorProvider, useCurrentEditor } from '@tiptap/react'
 import { Color } from '@tiptap/extension-color'
 import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
+import { createClient } from '@/lib/supabase/client'
 
 const MenuBar = () => {
   const { editor } = useCurrentEditor()
@@ -18,8 +19,9 @@ const MenuBar = () => {
   return (
     <div className="control-group">
       <div className="button-group">
-        {/* <button
-          onClick={() => {editor.chain().focus().toggleBulletList().run()
+        <button
+          onClick={() => {
+            editor.chain().focus().toggleBulletList().run()
             console.log("Bullet")
           }}
           className={editor.isActive('bulletList') ? 'is-active' : ''}
@@ -31,7 +33,7 @@ const MenuBar = () => {
           className={editor.isActive('orderedList') ? 'is-active' : ''}
         >
           Ordered list
-        </button> */}
+        </button>
       </div>
     </div>
   )
@@ -52,19 +54,48 @@ const extensions = [
   }),
 ]
 
-const content = `
-<ul>
-  <li>
-    First outline
-  </li>
-</ul>
-`
+interface TipTapProps {
+  documentsData: {
+    id: string;
+    content: string;
+    title: string;
+    outline: string;
+  };
+}
 
-export default function TipTap() {
-  // const editor = useEditor({
-  //   extensions: [StarterKit],
-  //   content: '<p>Hello World! 🌎️</p>',
-  // })
+export default function TipTap({ documentsData }: TipTapProps) {
+  const supabase = createClient();
 
-  return <EditorProvider slotBefore={<MenuBar />} extensions={extensions} content={content}></EditorProvider>
+  const editor = useEditor({
+    extensions,
+    content: documentsData.outline,
+    onUpdate: async ({ editor }) => {
+      try {
+        console.log("hii", editor.getJSON());
+
+        const { error } = await supabase
+          .from("document")
+          .update({
+            outline: editor.getJSON(),
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", documentsData.id);
+
+        if (error) {
+          console.error('Error saving document:', error);
+        } else {
+          console.log('Document saved successfully to ID:', documentsData.id);
+        }
+      } catch (error) {
+        console.error('Error saving document:', error);
+      }
+    },
+  });
+
+  return (
+    <>
+      {/* <MenuBar /> */}
+      <EditorContent editor={editor} />
+    </>
+  );
 }

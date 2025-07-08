@@ -41,9 +41,16 @@ interface Comment {
 interface CommentsPanelProps {
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  documentsData: {
+    id: string;
+    content: string;
+    title: string;
+    outline: string;
+  };
 }
 
 export function CommentsPanel({ 
+  documentsData,
   isOpen = true, 
   onOpenChange 
 }: CommentsPanelProps) {
@@ -74,7 +81,7 @@ export function CommentsPanel({
       <Sidebar collapsible="offcanvas" side="right" className="p-4">
         <h2>Outline</h2>
         <div className="min-h-8">
-          <TipTap />
+          <TipTap documentsData={documentsData} />
         </div>
         <h2>Resources</h2>
         <div className="flex gap-2 mt-4">

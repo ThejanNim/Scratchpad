@@ -12,6 +12,7 @@ interface DocumentTemplateProps {
     id: string;
     content: string;
     title: string;
+    outline: string;
   };
 }
 
@@ -27,11 +28,9 @@ export default function DocumentTemplate({
     setIsFocusMode(newFocusMode);
 
     if (newFocusMode) {
-      // Enter focus mode - close both sidebars
       setMainSidebarOpen(false);
       setCommentsPanelOpen(false);
     } else {
-      // Exit focus mode - open both sidebars
       setMainSidebarOpen(true);
       setCommentsPanelOpen(true);
     }
@@ -51,7 +50,7 @@ export default function DocumentTemplate({
       </div>
 
       <CommentsPanel isOpen={commentsPanelOpen}
-        onOpenChange={setCommentsPanelOpen}/>
+        onOpenChange={setCommentsPanelOpen} documentsData={documentsData} />
     </>
   );
 }
