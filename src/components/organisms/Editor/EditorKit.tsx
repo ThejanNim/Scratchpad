@@ -35,8 +35,12 @@ import { SuggestionKit } from './plugins/suggestion-kit';
 import { TableKit } from './plugins/table-kit';
 import { TocKit } from './plugins/toc-kit';
 import { ToggleKit } from './plugins/toggle-kit';
+import { ActionKit } from './plugins/action-kit';
 
 export const EditorKit = [
+  // Scratch
+  ...ActionKit,
+
   ...AIKit,
   ...BlockMenuKit,
 

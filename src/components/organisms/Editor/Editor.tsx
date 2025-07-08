@@ -37,7 +37,7 @@ export default function Editor({ value, documentId }: EditorProps) {
       if (error) {
         console.error('Error saving document:', error);
       } else {
-        console.log('Document saved successfully to ID:', documentId);
+        console.log('Document saved successfully to ID:', documentId, content);
       }
     } catch (error) {
       console.error('Error saving document:', error);

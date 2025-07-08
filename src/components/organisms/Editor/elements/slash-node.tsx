@@ -57,19 +57,35 @@ type Group = {
 };
 
 const groups: Group[] = [
-    {
-      group: 'AI',
-      items: [
-        {
-          focusEditor: false,
-          icon: <SparklesIcon />,
-          value: 'AI',
-          onSelect: (editor) => {
-            editor.getApi(AIChatPlugin).aiChat.show();
-          },
+  {
+    group: 'Scratch',
+    items: [
+      {
+        icon: <Square />,
+        keywords: ["action"],
+        label: "Action",
+        value: 'action',
+      },
+    ].map((item) => ({
+      ...item,
+      onSelect: (editor, value) => {
+        insertBlock(editor, value);
+      },
+    })),
+  },
+  {
+    group: 'AI',
+    items: [
+      {
+        focusEditor: false,
+        icon: <SparklesIcon />,
+        value: 'AI',
+        onSelect: (editor) => {
+          editor.getApi(AIChatPlugin).aiChat.show();
         },
-      ],
-    },
+      },
+    ],
+  },
   {
     group: "Basic blocks",
     items: [
@@ -195,22 +211,6 @@ const groups: Group[] = [
         label: "Inline Equation",
         value: KEYS.inlineEquation,
       },
-    ].map((item) => ({
-      ...item,
-      onSelect: (editor, value) => {
-        insertInlineElement(editor, value);
-      },
-    })),
-  },
-  {
-    group: "Font",
-    items: [
-      {
-        focusEditor: true,
-        icon: <Type />,
-        label: "Red Text",
-        value: "red_text",
-      }
     ].map((item) => ({
       ...item,
       onSelect: (editor, value) => {
