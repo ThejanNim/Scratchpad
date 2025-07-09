@@ -51,7 +51,7 @@ const useActionElement = (state: ReturnType<typeof useActionElementState>) => {
   };
 };
 
-const ActionElement = ({ element, editor, ...props }: ActionElementProps) => {
+export const ActionElement = ({ element, editor, ...props }: ActionElementProps) => {
   const state = useActionElementState({ element });
   const { statusProps, readOnly } = useActionElement(state);
 
@@ -106,23 +106,12 @@ const ActionElement = ({ element, editor, ...props }: ActionElementProps) => {
       <div className="bg-background text-foreground h-full overflow-auto">
         <motion.div
           className="overflow-hidden"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{
-            opacity: 1,
-            y: 0,
-            transition: {
-              duration: 0.3,
-              ease: [0.2, 0.65, 0.3, 0.9],
-            },
-          }}
         >
           <LayoutGroup>
-            {/* Main task row */}
             <motion.div
               className="group flex items-center py-1.5 rounded-md"
               initial="hidden"
               animate="visible"
-              variants={taskVariants}
             >
               <motion.div
                 className="mr-2 flex-shrink-0 cursor-pointer focus-visible:outline-none"
@@ -137,13 +126,6 @@ const ActionElement = ({ element, editor, ...props }: ActionElementProps) => {
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={statusProps.status}
-                    initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                    exit={{ opacity: 0, scale: 0.8, rotate: 10 }}
-                    transition={{
-                      duration: 0.2,
-                      ease: [0.2, 0.65, 0.3, 0.9],
-                    }}
                   >
                     {statusProps.status === "completed" ? (
                       <CheckCircle2 className="h-4.5 w-4.5 text-green-500" />
@@ -171,7 +153,6 @@ const ActionElement = ({ element, editor, ...props }: ActionElementProps) => {
                 </div>
 
                 <div className="flex flex-shrink-0 items-center space-x-2 text-xs">
-                  {/* Status Badge */}
                   <motion.span
                     className={`rounded px-1.5 py-0.5 ${
                       statusProps.status === "completed"
