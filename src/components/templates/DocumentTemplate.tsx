@@ -2,10 +2,10 @@
 
 import { Toaster } from "sonner";
 import Header from "../molecules/Header/Header";
-import Editor from "../organisms/Editor/Editor";
 import { CommentsPanel } from "../ui/comments-panel";
 import { useCallback, useState } from "react";
 import { useSidebar } from "../ui/sidebar";
+import Editor from "../organisms/Editor/Editor";
 
 interface DocumentTemplateProps {
   documentsData: {

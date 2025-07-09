@@ -2,12 +2,9 @@
 
 import { Plate, usePlateEditor } from "platejs/react";
 import { EditorKit } from "./EditorKit";
-import {
-  EditorContainer,
-  Editor as EditorComponent,
-} from "@/components/organisms/Editor/elements/editor";
 import { useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { EditorContainer, Editor as EditorComponent } from "./PlateEditor/editor";
 
 interface EditorProps {
   value: any;
