@@ -37,7 +37,7 @@ export default function DocumentItem({
           className="flex-1"
           style={{ paddingLeft: `${level * 1}rem` }}
         >
-          <Link href={`/editor/${document.id}`}>
+          <Link href={`/editor/${document.id}`} prefetch>
             <File className="size-3" />
             <span>{document.title}</span>
           </Link>
