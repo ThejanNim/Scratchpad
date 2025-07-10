@@ -1,51 +1,49 @@
-"use client"
+"use client";
 
-import type * as React from "react"
-import { useState } from "react"
-import Link from "next/link"
-import { Eye, EyeOff, Mail, Lock, Chrome } from "lucide-react"
+import type * as React from "react";
+import { useState } from "react";
+import Link from "next/link";
+import { Eye, EyeOff, Mail, Lock, Chrome } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Separator } from "@/components/ui/separator"
-import { login } from "./actions"
-import { supabase } from "@/lib/supabase/client"
-import next from "next"
-import { toast } from "sonner"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { login } from "./actions";
+import { supabase } from "@/lib/supabase/client";
+import next from "next";
 
 export default function SignInPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   async function signInWithGoogle() {
-    setIsGoogleLoading(true)
     try {
       const safeNext = typeof next === "string" ? next : "";
-      
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback${safeNext ? `?next=${encodeURIComponent(safeNext)}` : ""}`,
+          redirectTo: `${window.location.origin}/auth/callback${
+            safeNext ? `?next=${encodeURIComponent(safeNext)}` : ""
+          }`,
         },
-      })
- 
+      });
+
       if (error) {
-        throw error
+        throw error;
       }
     } catch (error) {
-      // toast({
-      //   title: "Please try again.",
-      //   description: "There was an error logging in with Google.",
-      //   variant: "destructive",
-      // })
-      setIsGoogleLoading(false)
+      console.error("Google sign-in error:", error);
     }
   }
 
@@ -53,18 +51,19 @@ export default function SignInPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Welcome back</CardTitle>
-          <CardDescription className="text-center">Sign in to your account to continue</CardDescription>
+          <CardTitle className="text-2xl font-bold text-center">
+            Welcome back
+          </CardTitle>
+          <CardDescription className="text-center">
+            Sign in to your account to continue
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          {/* Google Sign In */}
-          <Button variant="outline" className="w-full bg-transparent" onClick={signInWithGoogle} disabled={isLoading}>
+          <Button
+            variant="outline"
+            className="w-full bg-transparent"
+            onClick={signInWithGoogle}
+          >
             <Chrome className="mr-2 h-4 w-4" />
             Continue with Google
           </Button>
@@ -74,7 +73,9 @@ export default function SignInPage() {
               <Separator className="w-full" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with
+              </span>
             </div>
           </div>
 
@@ -128,13 +129,16 @@ export default function SignInPage() {
             </div>
 
             <div className="flex items-center justify-between">
-              <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">
+              <Link
+                href="/auth/forgot-password"
+                className="text-sm text-primary hover:underline"
+              >
                 Forgot password?
               </Link>
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading} formAction={login}>
-              {isLoading ? "Signing in..." : "Sign in"}
+            <Button type="submit" className="w-full" formAction={login}>
+              Sign in
             </Button>
           </form>
         </CardContent>
@@ -148,5 +152,5 @@ export default function SignInPage() {
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

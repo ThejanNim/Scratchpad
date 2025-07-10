@@ -1,6 +1,6 @@
 // TODO: Improve this Name (Action is confuse)
 
-import { AnimatePresence, LayoutGroup, motion, Variants } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { CheckCircle2, CircleDotDashed, Circle } from "lucide-react";
 import { createPlatePlugin } from "platejs/react";
 import { type PlateElementProps, PlateElement } from "platejs/react";
@@ -55,7 +55,7 @@ const useActionElement = (state: ReturnType<typeof useActionElementState>) => {
 
 export const ActionElement = ({ element, editor, ...props }: ActionElementProps) => {
   const state = useActionElementState({ element });
-  const { statusProps, readOnly } = useActionElement(state);
+  const { statusProps } = useActionElement(state);
 
   // Add support for reduced motion preference
   const prefersReducedMotion =
@@ -76,29 +76,6 @@ export const ActionElement = ({ element, editor, ...props }: ActionElementProps)
     const newStatus = statuses[nextIndex];
 
     statusProps.onStatusChange(newStatus);
-  };
-
-  // Animation variants with reduced motion support
-  const taskVariants: Variants = {
-    hidden: {
-      opacity: 0,
-      y: prefersReducedMotion ? 0 : -5,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: prefersReducedMotion ? "tween" : "spring",
-        stiffness: 500,
-        damping: 30,
-        duration: prefersReducedMotion ? 0.2 : undefined,
-      },
-    },
-    exit: {
-      opacity: 0,
-      y: prefersReducedMotion ? 0 : -5,
-      transition: { duration: 0.15 },
-    }
   };
 
   const isCompleted = statusProps.status === "completed";
