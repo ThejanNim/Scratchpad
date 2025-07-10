@@ -3,7 +3,8 @@ import DocumentTemplate from "@/components/templates/DocumentTemplate";
 export default async function Document({
   params,
 }: {
-  params: { document: string }
+  params: Promise<{ document: string }>
 }) {
-  return <DocumentTemplate documentId={params.document} />
+  const { document } = await params;
+  return <DocumentTemplate documentId={document} />
 }
