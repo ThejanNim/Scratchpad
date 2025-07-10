@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { Toaster } from "sonner";
 import Header from "../molecules/Header/Header";
 import { CommentsPanel } from "../ui/comments-panel";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useSidebar } from "../ui/sidebar";
 import Editor from "../organisms/Editor/Editor";
 import { supabase } from "@/lib/supabase/client";
