@@ -12,6 +12,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
 import { login } from "./actions"
+import { supabase } from "@/lib/supabase/client"
+import next from "next"
+import { toast } from "sonner"
 
 export default function SignInPage() {
   const [email, setEmail] = useState("")
@@ -19,6 +22,32 @@ export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false)
+
+  async function signInWithGoogle() {
+    setIsGoogleLoading(true)
+    try {
+      const safeNext = typeof next === "string" ? next : "";
+      
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback${safeNext ? `?next=${encodeURIComponent(safeNext)}` : ""}`,
+        },
+      })
+ 
+      if (error) {
+        throw error
+      }
+    } catch (error) {
+      // toast({
+      //   title: "Please try again.",
+      //   description: "There was an error logging in with Google.",
+      //   variant: "destructive",
+      // })
+      setIsGoogleLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -35,7 +64,7 @@ export default function SignInPage() {
           )}
 
           {/* Google Sign In */}
-          <Button variant="outline" className="w-full bg-transparent" onClick={() => {}} disabled={isLoading}>
+          <Button variant="outline" className="w-full bg-transparent" onClick={signInWithGoogle} disabled={isLoading}>
             <Chrome className="mr-2 h-4 w-4" />
             Continue with Google
           </Button>

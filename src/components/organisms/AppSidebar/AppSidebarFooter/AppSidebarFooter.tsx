@@ -1,3 +1,5 @@
+"use client";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +16,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { supabase } from "@/lib/supabase/client";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { User } from "@supabase/supabase-js";
 import {
@@ -23,6 +26,7 @@ import {
   IconNotification,
   IconLogout,
 } from "@tabler/icons-react";
+import { redirect } from "next/navigation";
 
 interface AppSidebarFooterProps {
   user: User;
@@ -30,6 +34,17 @@ interface AppSidebarFooterProps {
 
 export function AppSidebarFooter({ user }: AppSidebarFooterProps) {
   const { isMobile } = useSidebar();
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error("Error logging out:", error);
+    } else {
+      redirect("/auth/sign-in");
+    }
+  };
+
   return (
     <SidebarFooter>
       <SidebarMenu>
@@ -93,7 +108,7 @@ export function AppSidebarFooter({ user }: AppSidebarFooterProps) {
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
                 <IconLogout />
                 Log out
               </DropdownMenuItem>

@@ -26,53 +26,6 @@ export default function SignUpPage() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
 
-  // const handleEmailSignUp = async (e: React.FormEvent) => {
-  //   e.preventDefault()
-  //   setIsLoading(true)
-  //   setError("")
-
-  //   // Validation
-  //   if (password !== confirmPassword) {
-  //     setError("Passwords do not match")
-  //     setIsLoading(false)
-  //     return
-  //   }
-
-  //   if (password.length < 6) {
-  //     setError("Password must be at least 6 characters long")
-  //     setIsLoading(false)
-  //     return
-  //   }
-
-  //   if (!acceptTerms) {
-  //     setError("Please accept the terms and conditions")
-  //     setIsLoading(false)
-  //     return
-  //   }
-
-  //   try {
-  //     // const { error } = await supabase.auth.signUp({
-  //     //   email,
-  //     //   password,
-  //     //   options: {
-  //     //     data: {
-  //     //       full_name: fullName,
-  //     //     },
-  //     //   },
-  //     // })
-
-  //     // if (error) {
-  //     //   setError(error.message)
-  //     // } else {
-  //     //   setSuccess(true)
-  //     // }
-  //   } catch (err) {
-  //     setError(`An unexpected error occurred: ${err}`)
-  //   } finally {
-  //     setIsLoading(false)
-  //   }
-  // }
-
   if (success) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
