@@ -52,8 +52,8 @@ export default function Editor({ value, documentId }: EditorProps) {
     // Debounced save
     saveTimeoutRef.current = setTimeout(() => {
       saveToSupabase(content.value);
-    }, 2000);
-  }, [saveToSupabase, documentId]);
+    }, 1000);
+  }, [saveToSupabase]);
 
   return (
     <Plate
