@@ -3,7 +3,7 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { UserProvider } from "@/context/UserContext";
 import AppSidebar from "../organisms/AppSidebar/AppSidebar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface EditorLayoutClientProps {
   children: React.ReactNode;
@@ -29,18 +29,14 @@ export default function EditorTemplate({
         open={isSidebarOpen}
         onOpenChange={setIsSidebarOpen}
       >
-        <div className="flex h-screen w-full">
-          <div className="h-full flex flex-col">
-            <AppSidebar
-              collections={collectionsData}
-              documents={documentsData}
-              user={user}
-              handleSignOut={handleSignOut}
-              collapsible="offcanvas"
-            />
-          </div>
-          {children}
-        </div>
+        <AppSidebar
+          collections={collectionsData}
+          documents={documentsData}
+          user={user}
+          handleSignOut={handleSignOut}
+          collapsible="offcanvas"
+        />
+        {children}
       </SidebarProvider>
     </UserProvider>
   );

@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import EditorTemplate from "@/components/templates/EditorTemplate";
+import EditorTemplate from "@/components/templates/SidebarTemplate";
 
 export default async function EditorLayout({
   children,

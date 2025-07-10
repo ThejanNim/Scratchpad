@@ -17,7 +17,7 @@ interface HeaderProps {
 
 export default function Header({ onFocusToggle }: HeaderProps) {
   return (
-    <header className="flex h-9 shrink-0 items-center gap-2 border-b px-4">
+    <header className="flex shrink-0 h-(--header-height) items-center gap-2 border-b px-4 p-2">
       <SidebarTrigger className="-ml-1" />
       <div className="flex justify-between w-full">
         <Breadcrumb>

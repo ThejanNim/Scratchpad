@@ -3,17 +3,24 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
-import { FolderOpen } from "lucide-react";
+import { CircleDot } from "lucide-react";
+import {
+  IconHelp,
+  IconSearch,
+  IconSettings,
+} from "@tabler/icons-react";
 import React from "react";
 import Collections from "../Collections/Collections";
+import { NavSecondary } from "./NavSecondary/NavSecondary";
+import { AppSidebarFooter } from "./AppSidebarFooter/AppSidebarFooter";
+
 export interface ICollection {
   id: string;
   name: string;
@@ -40,6 +47,24 @@ interface SidebarProps extends React.ComponentProps<typeof Sidebar> {
   collapsible?: "icon" | "offcanvas" | "none";
 }
 
+const navSecondary = [
+  {
+    title: "Settings",
+    url: "#",
+    icon: IconSettings,
+  },
+  {
+    title: "Get Help",
+    url: "#",
+    icon: IconHelp,
+  },
+  {
+    title: "Search",
+    url: "#",
+    icon: IconSearch,
+  },
+];
+
 export default function AppSidebar({
   collections = [],
   documents = [],
@@ -53,19 +78,10 @@ export default function AppSidebar({
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
+            <SidebarMenuButton asChild>
               <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <FolderOpen className="size-4" />
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">
-                    {user ? user.user_metadata?.full_name || "User" : "Guest"}
-                  </span>
-                  <span className="text-xs">
-                    {user ? user.email : "Collections"}
-                  </span>
-                </div>
+                <CircleDot className="!size-5" />
+                <span className="text-base font-semibold">Scratchpad</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -81,34 +97,9 @@ export default function AppSidebar({
           <Collections collections={collections} documents={documents} />
         )}
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="#" className="flex items-center gap-2">
-                    <span>Settings</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              {user && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <button
-                      type="submit"
-                      className="flex items-center gap-2 text-red-600 hover:text-red-700 w-full text-left"
-                      onClick={handleSignOut}
-                    >
-                      <span>Sign Out</span>
-                    </button>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>
+      <AppSidebarFooter user={user} />
     </Sidebar>
   );
 }
