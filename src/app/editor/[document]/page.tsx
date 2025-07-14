@@ -7,7 +7,7 @@ import EditorTemplate from "@/components/templates/EditorTemplate";
 export default function Document({
   params,
 }: {
-  params: Promise<{ document: string }>;
+  params: Promise<{ document: string }>
 }) {
   const { document } = use(params);
   const { documentsData } = useCollectionDocument();
