@@ -3,12 +3,10 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import { CircleDot } from "lucide-react";
 import {
@@ -94,7 +92,7 @@ export default function AppSidebar({
             No collections found
           </div>
         ) : (
-          <Collections collections={collections} documents={documents} />
+          <Collections />
         )}
 
         <NavSecondary items={navSecondary} className="mt-auto" />

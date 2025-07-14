@@ -21,7 +21,7 @@ import {
   MoreVertical,
   Plus,
   Trash2,
-  File
+  File,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -30,19 +30,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { useCollectionDocument } from "@/hooks/useCollectionDocument";
+import { useUser } from "@/context/UserContext";
 
-interface CollectionTreeProps extends Pick<DocumentItemProps, 'level' | 'isLoading' | 'handleDocumentAction'> {
+interface CollectionTreeProps
+  extends Pick<
+    DocumentItemProps,
+    "level" | "isLoading" | "handleDocumentAction"
+  > {
   buildTree: (parentId: string | null) => (ICollection | IDocumentItem)[];
   parentId: string | null;
   openSections: string[];
-  collections: ICollection[] | null;
-  documents: IDocumentItem[] | null;
-  handleCollectionAction: (
-    collectionId: string,
-    action: "rename" | "duplicate" | "delete"
-  ) => void;
-  createNewCollection: (parentId?: string) => void;
-  createNewDocument: (collectionId: string) => void;
+  collections: any[] | undefined;
+  documents: any[] | undefined;
   toggleSection: (sectionId: string) => void;
 }
 
@@ -55,11 +55,11 @@ export default function CollectionTree({
   level = 0,
   isLoading,
   handleDocumentAction,
-  handleCollectionAction,
-  createNewCollection,
-  createNewDocument,
   toggleSection,
 }: CollectionTreeProps) {
+  const { createDocument, createCollection } = useCollectionDocument();
+  const user = useUser();
+
   const items = buildTree(parentId);
 
   return items.map((item) => {
@@ -109,27 +109,21 @@ export default function CollectionTree({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" side="right">
                   <DropdownMenuItem
-                    onClick={() =>
-                      handleCollectionAction(collection.id, "rename")
-                    }
+                    onClick={() => {}}
                     disabled={isLoading}
                   >
                     <Edit className="h-4 w-4 mr-2" />
                     Rename
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() =>
-                      handleCollectionAction(collection.id, "duplicate")
-                    }
+                    onClick={() => {}}
                     disabled={isLoading}
                   >
                     <Copy className="h-4 w-4 mr-2" />
                     Duplicate
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() =>
-                      handleCollectionAction(collection.id, "delete")
-                    }
+                    onClick={() => {}}
                     className="text-red-600 focus:text-red-600"
                     disabled={isLoading}
                   >
@@ -154,14 +148,26 @@ export default function CollectionTree({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" side="right">
                   <DropdownMenuItem
-                    onClick={() => createNewDocument(collection.id)}
+                    onClick={() => {
+                      createDocument({
+                        collection_id: collection.id,
+                        title: "New Document",
+                      });
+                    }}
                     disabled={isLoading}
                   >
                     <File className="h-4 w-4 mr-2" />
                     Add a doc
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => createNewCollection(collection.id)}
+                    onClick={() => {
+                      const collectionName = prompt("Enter collection name:");
+                      createCollection({
+                        collectionName: collectionName || "New Collection",
+                        parentId: collection.id,
+                        userId: user.user?.id || "",
+                      });
+                    }}
                     disabled={isLoading}
                   >
                     <Folder className="h-4 w-4 mr-2" />
@@ -183,9 +189,6 @@ export default function CollectionTree({
                     documents,
                     isLoading,
                     handleDocumentAction,
-                    handleCollectionAction,
-                    createNewCollection,
-                    createNewDocument,
                     toggleSection,
                   }}
                 />

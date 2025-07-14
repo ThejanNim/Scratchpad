@@ -1,8 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import EditorTemplate from "@/components/templates/SidebarTemplate";
+import EditorLayout from "@/components/layouts/EditorLayout";
+import {
+  CollectionDocumentProvider,
+} from "@/hooks/useCollectionDocument";
 
-export default async function EditorLayout({
+export default async function Layout({
   children,
 }: {
   children: React.ReactNode;
@@ -15,25 +18,6 @@ export default async function EditorLayout({
 
   if (!user) {
     redirect("/auth/sign-in");
-  }
-
-  const { data: collectionsData, error: collectionsError } = await supabase
-    .from("collection")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("name");
-
-  const { data: documentsData, error: documentsError } = await supabase
-    .from("document")
-    .select("*")
-    .order("title");
-
-  if (collectionsError) {
-    console.error("Error fetching collections:", collectionsError);
-  }
-
-  if (documentsError) {
-    console.error("Error fetching documents:", documentsError);
   }
 
   const handleSignOut = async (formData: FormData) => {
@@ -51,13 +35,13 @@ export default async function EditorLayout({
   };
 
   return (
-    <EditorTemplate
-      user={user}
-      collectionsData={collectionsData || []}
-      documentsData={documentsData || []}
-      handleSignOut={handleSignOut}
-    >
-      {children}
-    </EditorTemplate>
+    <CollectionDocumentProvider userId={user.id}>
+      <EditorLayout
+        user={user}
+        handleSignOut={handleSignOut}
+      >
+        {children}
+      </EditorLayout>
+    </CollectionDocumentProvider>
   );
 }
