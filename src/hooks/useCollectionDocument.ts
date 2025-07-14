@@ -2,6 +2,7 @@
 
 import { supabase } from "@/lib/supabase/client";
 import constate from "constate";
+import { useState } from "react";
 import useSWR from "swr";
 
 interface CollectionDocumentProviderProps {
@@ -10,6 +11,8 @@ interface CollectionDocumentProviderProps {
 
 export const [CollectionDocumentProvider, useCollectionDocument] = constate(
   ({ userId }: CollectionDocumentProviderProps) => {
+    const [documentId, setDocumentId] = useState<string | null>(null);
+
     const fetchCollections = async () => {
       const { data, error } = await supabase
         .from("collection")
@@ -143,6 +146,8 @@ export const [CollectionDocumentProvider, useCollectionDocument] = constate(
     };
 
     return {
+      documentId,
+      setDocumentId,
       collectionsData,
       collectionsError,
       documentsData,

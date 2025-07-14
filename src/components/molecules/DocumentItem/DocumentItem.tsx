@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal, File, Edit, Copy, Trash2 } from "lucide-react";
 import { IDocumentItem } from "@/components/organisms/AppSidebar/AppSidebar";
 import Link from 'next/link'
+import { useCollectionDocument } from "@/hooks/useCollectionDocument";
 
 export interface DocumentItemProps {
   document: IDocumentItem;
@@ -29,15 +30,18 @@ export default function DocumentItem({
   isLoading,
   handleDocumentAction,
 }: DocumentItemProps) {
+  const { documentId, setDocumentId } = useCollectionDocument();
   return (
     <SidebarMenuSubItem>
       <div className="flex items-center group/item w-full">
         <SidebarMenuSubButton
           asChild
-          className="flex-1"
+          className={`flex-1 ${documentId === document.id ? "bg-gray-200" : ""}`}
           style={{ paddingLeft: `${level * 1}rem` }}
         >
-          <Link href={`/editor/${document.id}`} prefetch>
+          <Link href={`/editor/${document.id}`} onClick={() => {
+            setDocumentId(document.id);
+          }}>
             <File className="size-3" />
             <span>{document.title}</span>
           </Link>
