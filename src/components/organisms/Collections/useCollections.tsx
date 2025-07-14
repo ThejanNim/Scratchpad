@@ -1,7 +1,6 @@
 import constate from "constate";
 import { ICollection, IDocumentItem } from "../AppSidebar/AppSidebar";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase/client";
 import { useCollectionDocument } from "@/hooks/useCollectionDocument";
 
 // type CollectionsProviderProps = React.PropsWithChildren<{
